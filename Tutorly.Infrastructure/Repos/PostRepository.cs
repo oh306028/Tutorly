@@ -7,7 +7,7 @@ using Tutorly.Domain.Models;
 
 namespace Tutorly.Application.Interfaces
 {
-    public class IPostRepository : IRepository<Post>
+    public class PostRepository : IRepository<Post> 
     {
         public void AddAsync(Post post) 
         {
