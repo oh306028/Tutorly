@@ -11,11 +11,11 @@ namespace Tutorly.Application.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<T> GetByIdAsync(int id);
 
-        void AddAsync(T entity);    
+        Task AddAsync(T entity);    
 
-        void UpdateAsync(T entity); 
+        Task UpdateAsync(T entity);     
 
-        void DeleteAsync(int id);   
+        Task DeleteAsync(int id);   
 
     }
 }
