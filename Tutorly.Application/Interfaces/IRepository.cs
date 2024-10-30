@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tutorly.Domain.Models;
 
 namespace Tutorly.Application.Interfaces
 {
@@ -15,7 +16,8 @@ namespace Tutorly.Application.Interfaces
 
         Task UpdateAsync(T entity);     
 
-        Task DeleteAsync(int id);   
+        Task DeleteAsync(int id);
+        Task<IEnumerable<Post>> GetAllAsync(Predicate<T> predicate);    
 
     }
 }
