@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 
-namespace Tutorly.Application.Interfaces
+namespace Tutorly.Infrastructure.Repos
 {
-    public class PostRepository : IRepository<Post> 
+    public class CategoryRepository : IRepository<Category>
     {
-        public Task AddAsync(Post post) 
+        public Task AddAsync(Category entity)
         {
             throw new NotImplementedException();
         }
@@ -19,27 +20,24 @@ namespace Tutorly.Application.Interfaces
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Post>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-            
-        public Task<IEnumerable<Post>> GetAllAsync(Predicate<Post> predicate)
+        public Task<IEnumerable<Category>> GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<Post> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-            
-        public Task UpdateAsync(Post post)  
+        public Task<IEnumerable<Post>> GetAllAsync(Predicate<Category> predicate)
         {
             throw new NotImplementedException();
         }
 
+        public Task<Category> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }   
 
-
+        public Task UpdateAsync(Category entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

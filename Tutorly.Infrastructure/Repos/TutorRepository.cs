@@ -3,43 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 
-namespace Tutorly.Application.Interfaces
+namespace Tutorly.Infrastructure.Repos
 {
-    public class PostRepository : IRepository<Post> 
+    public class TutorRepository : IRepository<Tutor>
     {
-        public Task AddAsync(Post post) 
+        public Task AddAsync(Tutor entity)  
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(int id) 
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Post>> GetAllAsync()
+        public Task<IEnumerable<Tutor>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Post>> GetAllAsync(Predicate<Tutor> predicate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Tutor> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
             
-        public Task<IEnumerable<Post>> GetAllAsync(Predicate<Post> predicate)
+        public Task UpdateAsync(Tutor entity)
         {
             throw new NotImplementedException();
         }
-
-        public Task<Post> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-            
-        public Task UpdateAsync(Post post)  
-        {
-            throw new NotImplementedException();
-        }
-
-
-
     }
 }
