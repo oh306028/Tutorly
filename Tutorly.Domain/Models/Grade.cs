@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Tutorly.Domain.Models
 {
-    public enum Role
+    public enum Grade
     {
-        Tutor,
-        Student
+        Primary,
+        Secondary,
+        HighSchool,
+        College
     }
 }

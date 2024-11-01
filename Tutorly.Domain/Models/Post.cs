@@ -7,19 +7,31 @@ using Tutorly.Domain.ModelsExceptions;
 
 namespace Tutorly.Domain.Models
 {
-    public class Post
+    public class Post   
     {
-        public int MaxStudentAmount { get; set; }
+
+        public Post(Tutor tutor, int maxStudentAmount, Category category, string? description = null)
+        {
+            if (maxStudentAmount >= 0)
+                throw new ArgumentException("Post's students max amount must be greater than zero");
+
+            MaxStudentAmount = maxStudentAmount;
+            Description = description;
+            Category = category;
+            Tutor = tutor;
+        }
+    
+        public int MaxStudentAmount { get; init; }
         public int CurrentStudentAmount => Students.Count;
 
-        private readonly List<Student> Students = new();
-        public string Description { get; set; } 
+        public readonly List<Student> Students = new();
+        public string? Description { get; set; } 
 
         public int TutorId { get; set; }
-        public Tutor Tutor { get; set; }
+        public Tutor Tutor { get; init; }
 
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
+        public Category Category { get; init; }
 
         public void AddStudent(Student student)
         {

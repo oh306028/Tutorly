@@ -8,6 +8,9 @@ namespace Tutorly.Domain.Models
 {
     public class Student : User
     {
+        public Grade Grade { get; set; }
 
+        public int? PostId { get; set; }
+        public Post? Post { get; set; }
     }
 }
