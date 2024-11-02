@@ -15,6 +15,7 @@ namespace Tutorly.Application.Services
     public interface IPostService
     {
         Task<IEnumerable<Post>> GetAll(QueryParams queryParams = null);
+        Task Create(CreatePostDto dto);
     }
 
     public class PostService : IPostService
@@ -33,6 +34,14 @@ namespace Tutorly.Application.Services
             var posts = await _queryHandler.HandleAsync(query);
                 
             return posts;   
+        }
+
+
+        public async Task Create(CreatePostDto dto)
+        {
+            var command = new CreatePost(dto.CategoryId, dto.TutorId, dto.MaxStudentAmount, dto.Description);
+            await _handler.Handle(command);
+
         }
 
 
