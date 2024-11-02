@@ -31,9 +31,15 @@ namespace Tutorly.WebAPI.Controllers
             return Ok(result);
                 
         }
-        
-     
 
+        [HttpPost]
+        public async Task<ActionResult> Create(CreatePostDto dto)
+        {
+             await _postService.Create(dto);
+
+            return Created("api/posts", null);
+        }
+     
 
     }
 }
