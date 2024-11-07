@@ -10,22 +10,46 @@ namespace Tutorly.Domain.Models
     public class Post   
     {
 
-        public Post(Tutor tutor, int maxStudentAmount, Category category, string? description = null)
+        public Post()
         {
-            if (maxStudentAmount >= 0)
+            
+        }
+        public Post(Tutor tutor, int maxStudentAmount, Category category, DayOfWeek happensOn, TimeSpan happensAt, bool isRemotely, bool isAtStudentPlace, int? address = null, string? description = null)
+        {
+            if (maxStudentAmount <= 0)
                 throw new ArgumentException("Post's students max amount must be greater than zero");
 
             MaxStudentAmount = maxStudentAmount;
             Description = description;
             Category = category;
+            HappensOn = happensOn;
+            HappensAt = happensAt;
+            IsRemotely = isRemotely;
+            IsAtStudentPlace = isAtStudentPlace;    
+            AddressId = address;    
             Tutor = tutor;
         }
-    
+
+        public int Id { get; set; } 
         public int MaxStudentAmount { get; init; }
         public int CurrentStudentAmount => Students.Count;
 
-        public readonly List<Student> Students = new();
-        public string? Description { get; set; } 
+        public readonly List<PostsStudents> Students = new();   
+        public string? Description { get; set; }
+        public DayOfWeek HappensOn { get; set; }
+        public TimeSpan HappensAt { 
+            get { return HappensAt; } 
+            set { if (value >= TimeSpan.MinValue && value < TimeSpan.MaxValue) { HappensAt = value; }
+                else { throw new ArgumentException("Post cannot be done at that time"); } }
+        }
+            
+        public bool IsRemotely { get; set; }
+        public bool IsAtStudentPlace { get; }
+        public bool IsHappeningAtStudentPlace { get; set; }
+        public Grade StudentsGrade { get; set; }    
+
+        public Address? Address { get; set; }
+        public int? AddressId { get; set; }         
 
         public int TutorId { get; set; }
         public Tutor Tutor { get; init; }
@@ -38,17 +62,20 @@ namespace Tutorly.Domain.Models
             if (CurrentStudentAmount >= MaxStudentAmount)
                throw new OutOfSpaceException("Current post cannot hold more students");
 
-            Students.Add(student);
+            Students.Add(new PostsStudents { PostId = Id, StudentId = student.Id });
 
         }
 
         public void DeleteStudent(Student student)
         {
-            if(!Students.Contains(student))
+            var postStudent = Students.FirstOrDefault(ps => ps.StudentId == student.Id);
+
+            if (postStudent == null)
                 throw new NotFoundException("Cannot delete student that is not a part of current post");
 
-            Students.Remove(student);
+           
+            Students.Remove(postStudent);
 
-        }
+        }   
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tutorly.Domain.Models
 {
-    public class User
+    public abstract class User
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

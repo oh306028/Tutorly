@@ -10,6 +10,6 @@ namespace Tutorly.Domain.Models
     {
         public Grade Grade { get; set; }
 
-        public List<Post> Posts { get; set; } = new();
+        public List<PostsStudents> Posts { get; set; } = new(); 
     }
 }
