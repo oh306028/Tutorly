@@ -3,14 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tutorly.Domain.Models;
 
 namespace Tutorly.Application.Dtos
 {
     public class CreatePostDto
     {
-        public int CategoryId { get; set; }
-        public int MaxStudentAmount { get; set; }
-        public int TutorId { get; set; }
-        public string Description { get; set; } 
+        public int CategoryId { get; }
+        public int TutorId { get; }
+        public int MaxStudentAmount { get; }
+        public DayOfWeek HappensOn { get; }
+        public TimeSpan HappensAt { get; }
+        public bool IsRemotely { get; }
+        public bool IsAtStudentPlace { get; }
+        public string? Description { get; }
+        public int? AddressId { get; }
+        public Grade StudentsGrade { get; }
     }
 }
