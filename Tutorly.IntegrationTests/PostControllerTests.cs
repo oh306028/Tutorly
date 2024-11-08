@@ -25,7 +25,7 @@ namespace Tutorly.IntegrationTests
         }
 
         [Fact]
-        public async Task CreatePost_InValidRequestTutor_Returns404()    
+        public async Task CreatePost_InValidRequest_Returns400()        
         {   
             var request = new CreatePostDto()
             {
@@ -34,7 +34,7 @@ namespace Tutorly.IntegrationTests
 
             var response = await _client.PostAsJsonAsync("api/posts",request);
 
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
         }
 
