@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
+using Tutorly.Application.Dtos;
 
 namespace Tutorly.IntegrationTests
 {
@@ -21,6 +22,20 @@ namespace Tutorly.IntegrationTests
             var response = await _client.GetAsync("api/posts");
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task CreatePost_InValidRequestTutor_Returns404()    
+        {   
+            var request = new CreatePostDto()
+            {
+                
+            };
+
+            var response = await _client.PostAsJsonAsync("api/posts",request);
+
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
         }
 
 
