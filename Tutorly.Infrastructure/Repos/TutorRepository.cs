@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Update;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Application.Interfaces;
@@ -10,34 +12,52 @@ namespace Tutorly.Infrastructure.Repos
 {
     public class TutorRepository : IRepository<Tutor>
     {
-        public Task AddAsync(Tutor entity)  
+        private readonly TutorlyDbContext _dbContext;
+
+        public TutorRepository(TutorlyDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }   
+
+        public async Task AddAsync(Tutor tutor)     
+        {
+            await _dbContext.Users.AddAsync(tutor);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task DeleteAsync(int id) 
+        public async Task DeleteAsync(Tutor tutor) 
         {
-            throw new NotImplementedException();
+            _dbContext.Users.Remove(tutor);
+            await _dbContext.SaveChangesAsync();
         }
 
         public Task<IEnumerable<Tutor>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var results = _dbContext.Users.OfType<Tutor>().ToList();
+            return Task.FromResult((IEnumerable<Tutor>)results);
+        }
+            
+        public Task<IEnumerable<Tutor>> GetAllAsync(Expression<Func<Tutor, bool>> predicate)
+        {
+            var results = _dbContext.Users.OfType<Tutor>().Where(predicate).ToList();
+
+            return Task.FromResult((IEnumerable<Tutor>)results);
         }
 
-        public Task<IEnumerable<Post>> GetAllAsync(Predicate<Tutor> predicate)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<Tutor> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var tutor = _dbContext.Users.OfType<Tutor>().FirstOrDefault(i => i.Id == id);
+
+            return Task.FromResult(tutor);
         }
             
-        public Task UpdateAsync(Tutor entity)
+        public async Task UpdateAsync(Tutor tutor)
         {
-            throw new NotImplementedException();
+            _dbContext.Users.Update(tutor);
+            await _dbContext.SaveChangesAsync();
         }
+
+  
     }
 }

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Application.Interfaces;
@@ -10,34 +12,50 @@ namespace Tutorly.Infrastructure.Repos
 {
     public class CategoryRepository : IRepository<Category>
     {
-        public Task AddAsync(Category entity)
+        private readonly TutorlyDbContext _dbContext;
+
+        public CategoryRepository(TutorlyDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task AddAsync(Category entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Add(entity);
+            await _dbContext.SaveChangesAsync();
+
         }
 
-        public Task<IEnumerable<Category>> GetAllAsync()
+        public async Task DeleteAsync(Category entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Categories.Remove(entity);
+            await _dbContext.SaveChangesAsync();
+        }   
+
+        public  async Task<IEnumerable<Category>> GetAllAsync()
+        {
+            var results = await _dbContext.Categories.ToListAsync();
+            return results;
         }
 
-        public Task<IEnumerable<Post>> GetAllAsync(Predicate<Category> predicate)
+        public Task<IEnumerable<Category>> GetAllAsync(Expression<Func<Category, bool>> predicate)
         {
-            throw new NotImplementedException();
+           var results =  _dbContext.Categories.Where(predicate);
+             
+            return Task.FromResult((IEnumerable<Category>)results.ToList());    
         }
 
         public Task<Category> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var category = _dbContext.Categories.FirstOrDefault(i => i.Id == id);
+
+            return Task.FromResult(category);
         }   
 
-        public Task UpdateAsync(Category entity)
+        public async Task UpdateAsync(Category entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Categories.Update(entity);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

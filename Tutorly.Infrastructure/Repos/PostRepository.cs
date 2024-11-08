@@ -1,44 +1,60 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Domain.Models;
+using Tutorly.Infrastructure;
 
 namespace Tutorly.Application.Interfaces
 {
     public class PostRepository : IRepository<Post> 
     {
-        public Task AddAsync(Post post) 
+        private readonly TutorlyDbContext _dbContext;
+
+        public PostRepository(TutorlyDbContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
         }
 
-        public Task DeleteAsync(int id)
+
+        public async Task AddAsync(Post post) 
         {
-            throw new NotImplementedException();
+            await _dbContext.Posts.AddAsync(post);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<Post>> GetAllAsync()
+        public async Task DeleteAsync(Post post)
         {
-            throw new NotImplementedException();
+            _dbContext.Posts.Remove(post);
+            await _dbContext.SaveChangesAsync();
         }
-            
-        public Task<IEnumerable<Post>> GetAllAsync(Predicate<Post> predicate)
+
+        public async Task<IEnumerable<Post>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Posts.ToListAsync();
         }
+
+        public async Task<IEnumerable<Post>> GetAllAsync(Expression<Func<Post, bool>> predicate)
+        {
+            var results = await _dbContext.Posts.Where(predicate).ToListAsync();
+            return results;
+        }
+
 
         public Task<Post> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var result = _dbContext.Posts.FirstOrDefault(i => i.Id == id);
+            return Task.FromResult(result);
         }
             
-        public Task UpdateAsync(Post post)  
+        public async Task UpdateAsync(Post post)  
         {
-            throw new NotImplementedException();
+            _dbContext.Posts.Update(post);
+            await _dbContext.SaveChangesAsync();
         }
-
 
 
     }
