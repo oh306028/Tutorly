@@ -12,7 +12,12 @@ using Tutorly.WebAPI.Authentication;
 
 namespace Tutorly.WebAPI.Services
 {
-    public class UserService
+    public interface IUserService
+    {
+        Task RegisterUserAsync(RegisterUserDto dto);
+    }
+
+    public class UserService : IUserService
     {
         private readonly JwtOptions _jwtOptions;
         private readonly IHandler<RegisterUser> _registerUserHandler;
@@ -25,21 +30,17 @@ namespace Tutorly.WebAPI.Services
             _mapper = mapper;
         }
 
-        public void RegisterUser(RegisterUserDto dto)  
+        public async Task RegisterUserAsync(RegisterUserDto dto)    
         {
-            var command = _mapper.Map<RegisterUser>(dto);   
+            var command = _mapper.Map<RegisterUser>(dto);
 
-            _registerUserHandler.Handle(command);
+            await _registerUserHandler.Handle(command);
         }
 
 
-        public void LoginUser()
-        {
-
-        }
 
 
-        private string GenerateToken(User user) 
+        private string GenerateToken(User user)
         {
             var key = Encoding.ASCII.GetBytes(_jwtOptions.Key);
             var securityKey = new SymmetricSecurityKey(key);
