@@ -14,6 +14,7 @@ using Tutorly.Infrastructure;
 using Tutorly.Infrastructure.Repos;
 using Tutorly.WebAPI.Authentication;
 using Tutorly.WebAPI.Middlewares;
+using Tutorly.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,14 +31,20 @@ builder.Services.AddDbContext<TutorlyDbContext>(options =>
 builder.Services.AddScoped<IRepository<Post>, PostRepository>();
 builder.Services.AddScoped<IRepository<Tutor>, TutorRepository>();
 builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
+builder.Services.AddScoped<IRepository<User>, UserRepository>();
 
+
+builder.Services.AddScoped<IHandler<PostApply>, PostApplyHandler>();
 builder.Services.AddScoped<IHandler<CreatePost>, CreatePostHandler>();
+builder.Services.AddScoped<IHandler<RegisterUser>, RegisterUserHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAllPosts, IEnumerable<Post>>, GetAllPostsHandler>();
+
+
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
-
 builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
 
