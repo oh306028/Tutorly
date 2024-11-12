@@ -25,8 +25,8 @@ namespace Tutorly.Application.Handlers
 
             User user;
 
-            if (command.Password != command.ConfirmPassword)
-                throw new ForbidException("Password and confirm password has to be equal!");
+            if (command.Password != command.ConfirmPassword)    
+                throw new WrongUserDataInputException("Password and confirm password has to be equal!");
 
             if(command.Role == Role.Tutor)
             {
