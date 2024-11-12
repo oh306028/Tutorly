@@ -10,8 +10,12 @@ namespace Tutorly.Application.Commands
 {
     public class PostApply : ICommand
     {
-        public Guid Id { get; set; }
-        public int PostId { get; set; }
+        public PostApply(int postId)
+        {
+            PostId = postId;
+        }
+        public Guid Id { get; set; }    
+        public int PostId { get; init; }
 
     }
 }

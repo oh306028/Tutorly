@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Domain.Models;
@@ -16,8 +17,8 @@ namespace Tutorly.Application.Interfaces
 
         Task UpdateAsync(T entity);     
 
-        Task DeleteAsync(int id);
-        Task<IEnumerable<Post>> GetAllAsync(Predicate<T> predicate);    
+        Task DeleteAsync(T entity);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate);          
 
     }
 }

@@ -22,6 +22,9 @@ namespace Tutorly.Application.Handlers
             _tutorRepository = tutorRepository;
             _categoryRepository = categoryRepository;
         }
+
+        //TO DO:
+        //AFTER JWT AUTHORIZATION NO MORE NEED TO TAKE TUTOR FROM REPOSITORY -> TAKE IT FROM USERCONTEXT ID
         public async Task Handle(CreatePost command)
         {
             var tutor = await _tutorRepository.GetByIdAsync(command.TutorId);
@@ -34,8 +37,21 @@ namespace Tutorly.Application.Handlers
             if(category is null)
                 throw new NotFoundException("Category not found");
 
+            if (command.MaxStudentAmount <= 0)
+                throw new OutOfSpaceException("Cannot create post for 0 or less students"); 
 
-            Post newPost = new(tutor, command.MaxStudentAmount, category, command.Description);
+            Post newPost = new(
+                tutor,
+                command.MaxStudentAmount,
+                category, 
+                command.HappensOn,
+                command.HappensAt,
+                command.IsRemotely, 
+                command.IsAtStudentPlace,
+                command.AddressId,
+                command.Description);
+
+
             await _postRepository.AddAsync(newPost);
            
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,6 @@ namespace Tutorly.Application.Handlers
         {
             _userRepository = userRepository;   
         }
-
 
         public async Task Handle(RegisterUser command)
         {
@@ -51,7 +51,9 @@ namespace Tutorly.Application.Handlers
                 };
             }
 
-
+            var hasher = new PasswordHasher();
+            var hashedPassword = hasher.HashPassword(command.Password);
+            user.PasswordHash = hashedPassword;
           
             await _userRepository.AddAsync(user);
 
