@@ -20,7 +20,17 @@ namespace Tutorly.WebAPI.Middlewares
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(outOfSpace.Message);
 
-            }catch(Exception ex)
+            }catch(WrongUserDataInputException dataInputEx)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(dataInputEx.Message);
+            }
+            catch(ForbidException forbid)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(forbid.Message);
+            }            
+            catch(Exception ex)
             {
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsync(ex.Message);
