@@ -24,22 +24,34 @@ namespace Tutorly.WebAPI.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll([FromBody] QueryParams? queryParams = null)  
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll([FromQuery] QueryParams? queryParams = null)  
         {
 
-            var result = await _postService.GetAll(queryParams);
+            var result = await _postService.GetAll(queryParams);    
             return Ok(result);
                 
         }
 
-        [HttpPost]
+        [Authorize(Roles = "Tutor")]
+        [HttpPost]  
         public async Task<ActionResult> Create(CreatePostDto dto)
         {
              await _postService.Create(dto);
 
             return Created("api/posts", null);
         }
-     
+            
+
+        [HttpPost("{postId}")]
+        [Authorize(Roles = "Student")]  
+        public async Task<ActionResult> ApplyForPost([FromRoute] int postId)
+        {
+            await _postService.ApplyForPost(postId);
+
+            return Ok();
+
+        }
+        
 
     }
 }
