@@ -38,6 +38,9 @@ builder.Services.AddScoped<IHandler<PostApply>, PostApplyHandler>();
 builder.Services.AddScoped<IHandler<CreatePost>, CreatePostHandler>();
 builder.Services.AddScoped<IHandler<RegisterUser>, RegisterUserHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAllPosts, IEnumerable<Post>>, GetAllPostsHandler>();
+builder.Services.AddScoped<IHandler<DeleteUser>, DeleteUserHandler>();
+builder.Services.AddScoped<IHandler<LoginUser>, LoginUserHandler>();
+builder.Services.AddScoped<IQueryHandler<GetUserBy, User>, GetUserByHandler>(); 
 
 
 builder.Services.AddScoped<IPostService, PostService>();
