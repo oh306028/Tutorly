@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Update;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,11 @@ namespace Tutorly.Infrastructure.Repos
             return Task.FromResult((IEnumerable<Tutor>)results);
         }
 
+        public async Task<Tutor> GetBy(Expression<Func<Tutor, bool>> predicate)
+        {
+            var result = await _dbContext.Users.OfType<Tutor>().FirstOrDefaultAsync(predicate);
+            return result;
+        }
 
         public Task<Tutor> GetByIdAsync(int id)
         {

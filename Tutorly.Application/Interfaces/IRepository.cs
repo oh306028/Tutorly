@@ -18,7 +18,9 @@ namespace Tutorly.Application.Interfaces
         Task UpdateAsync(T entity);     
 
         Task DeleteAsync(T entity);
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate);          
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate);
+
+        Task<T> GetBy(Expression<Func<T, bool>> predicate); 
 
     }
 }

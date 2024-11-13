@@ -45,6 +45,13 @@ namespace Tutorly.Infrastructure.Repos
             return Task.FromResult((IEnumerable<Category>)results.ToList());    
         }
 
+        public async Task<Category> GetBy(Expression<Func<Category, bool>> predicate) 
+        {
+            var result = await _dbContext.Categories.FirstOrDefaultAsync(predicate);
+
+            return result;
+        }
+
         public Task<Category> GetByIdAsync(int id)
         {
             var category = _dbContext.Categories.FirstOrDefault(i => i.Id == id);

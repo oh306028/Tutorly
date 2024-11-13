@@ -42,6 +42,13 @@ namespace Tutorly.Infrastructure.Repos
             return results;
         }
 
+        public async Task<User> GetBy(Expression<Func<User, bool>> predicate)
+        {
+            var result = await _dbContext.Users.FirstOrDefaultAsync(predicate);
+
+            return result;
+        }
+
         public async Task<User> GetByIdAsync(int id)
         {
             var result = await _dbContext.Users.FirstOrDefaultAsync(i => i.Id == id);

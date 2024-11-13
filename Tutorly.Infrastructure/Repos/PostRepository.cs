@@ -43,6 +43,12 @@ namespace Tutorly.Application.Interfaces
             return results;
         }
 
+        public async Task<Post> GetBy(Expression<Func<Post, bool>> predicate)
+        {
+            var result = await _dbContext.Posts.FirstOrDefaultAsync(predicate);
+
+            return result;
+        }
 
         public Task<Post> GetByIdAsync(int id)
         {
