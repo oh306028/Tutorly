@@ -12,6 +12,8 @@ namespace Tutorly.WebAPI
                 .ForMember(r => r.Role, opt => opt.MapFrom(src => src.Role))
                 .ForMember(g => g.Grade, opt => opt.MapFrom(src => src.Grade));
 
+            CreateMap<LoginUserDto, LoginUser>();
+
         }
 
 
