@@ -45,11 +45,17 @@ namespace Tutorly.Infrastructure.Repos
             return Task.FromResult((IEnumerable<Tutor>)results);
         }
 
-        public async Task<Tutor> GetBy(Expression<Func<Tutor, bool>> predicate)
+        public async Task<Tutor> GetByAsync(Expression<Func<Tutor, bool>> predicate)    
         {
             var result = await _dbContext.Users.OfType<Tutor>().FirstOrDefaultAsync(predicate);
             return result;
         }
+
+        public Tutor GetBy(Expression<Func<Tutor, bool>> predicate) 
+        {
+            var result =  _dbContext.Users.OfType<Tutor>().FirstOrDefault(predicate);
+            return result;
+        }   
 
         public Task<Tutor> GetByIdAsync(int id)
         {
