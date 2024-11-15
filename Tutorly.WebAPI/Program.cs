@@ -1,4 +1,6 @@
 using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,10 +8,12 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Tutorly.Application.Commands;
+using Tutorly.Application.Dtos;
 using Tutorly.Application.Handlers;
 using Tutorly.Application.Interfaces;
 using Tutorly.Application.Queries;
 using Tutorly.Application.Services;
+using Tutorly.Application.Validators;
 using Tutorly.Domain.Models;
 using Tutorly.Infrastructure;
 using Tutorly.Infrastructure.Repos;
@@ -33,6 +37,7 @@ builder.Services.AddScoped<IRepository<Post>, PostRepository>();
 builder.Services.AddScoped<IRepository<Tutor>, TutorRepository>();
 builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
+builder.Services.AddScoped<IRepository<Student>, StudentRepository>();
 
 
 builder.Services.AddScoped<IHandler<PostApply>, PostApplyHandler>();
@@ -46,7 +51,13 @@ builder.Services.AddScoped<IQueryHandler<GetUserBy, User>, GetUserByHandler>();
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<IUserContextService, UserContextService>();
 
+
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserDtoValidator>();
+builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<ExceptionHandlingMiddleware>();
