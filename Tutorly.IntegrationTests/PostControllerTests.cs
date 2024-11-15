@@ -2,9 +2,13 @@
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using System.Net;
 using Tutorly.Application.Dtos;
+using Tutorly.Application.Interfaces;
+using Tutorly.Domain.Models;
 using Tutorly.Infrastructure;
+using Tutorly.WebAPI.Services;
 
 namespace Tutorly.IntegrationTests
 {
@@ -12,10 +16,16 @@ namespace Tutorly.IntegrationTests
     public class PostControllerTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
+        private readonly WebApplicationFactory<Program> _factory;
+        private readonly Mock<IUserContextService> _mockUserContextService;
 
         public PostControllerTests(WebApplicationFactory<Program> factory)
         {
-            _client = factory.WithWebHostBuilder(host =>
+            _factory = factory;
+
+            _mockUserContextService = new Mock<IUserContextService>();
+
+            _client = _factory.WithWebHostBuilder(host =>
             {
                 host.ConfigureServices(services =>
                 {
@@ -31,6 +41,7 @@ namespace Tutorly.IntegrationTests
                     services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
                 });
             }).CreateClient();
+           
         }
 
 
@@ -57,6 +68,45 @@ namespace Tutorly.IntegrationTests
         }
 
 
+        [Fact]
+        public async Task PostApply_ValidStudentRequest_ReturnsOk()
+        {
+
+            var mockPostRepository = new Mock<IRepository<Post>>();
+            var mockStudentRepository = new Mock<IRepository<Student>>();
+            var mockUserContextService = new Mock<IUserContextService>();
+
+            var postId = 1;
+            var studentId = 1;
+
+            var student = new Student { Id = studentId, FirstName = "Test", LastName = "Test" };
+            var post = new Post { Id = postId, MaxStudentAmount = 1 };
+
+
+            mockPostRepository.Setup(r => r.GetByIdAsync(postId)).ReturnsAsync(post);
+            mockStudentRepository.Setup(r => r.GetByIdAsync(studentId)).ReturnsAsync(student);
+            mockUserContextService.Setup(s => s.GetUserId).Returns(studentId);
+
+            var client = _factory.WithWebHostBuilder(host =>
+            {
+                host.ConfigureServices(services =>
+                {
+                    services.AddSingleton(mockPostRepository.Object);
+                    services.AddSingleton(mockStudentRepository.Object);
+                    services.AddSingleton(mockUserContextService.Object);
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+
+            var response = await client.PostAsync($"api/posts/{postId}", null);
+
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        }
+
+ 
 
     }
 }
