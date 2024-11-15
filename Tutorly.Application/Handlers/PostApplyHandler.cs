@@ -7,20 +7,23 @@ using Tutorly.Application.Commands;
 using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 using Tutorly.Domain.ModelsExceptions;
+using Tutorly.WebAPI.Services;
 
 namespace Tutorly.Application.Handlers
 {
     public class PostApplyHandler : IHandler<PostApply>
     {
         private readonly IRepository<Post> _postRepository;
+        private readonly IUserContextService _userContextService;
+        private readonly IRepository<Student> _studentRepository;   
 
-        public PostApplyHandler(IRepository<Post> postRepository)
+        public PostApplyHandler(IRepository<Post> postRepository, IUserContextService userContextService, IRepository<Student> studentRepository)   
         {
             _postRepository = postRepository;
+            _userContextService = userContextService;
+            _studentRepository = studentRepository;   
         }
 
-        //TO DO
-        //user context accesor within the current user id
         public async Task Handle(PostApply command)
         {
             var post =  await _postRepository.GetByIdAsync(command.PostId);
@@ -29,17 +32,15 @@ namespace Tutorly.Application.Handlers
                 throw new NotFoundException("Post not found");
 
 
-            // TO DO:
-            //ADD CODE BELOW AFTER STUDENT REPO AND CONTEXT ACCESSOR
+            var student = await _studentRepository.GetByIdAsync((int)_userContextService.GetUserId);
 
-            /*
-            var student = 
+            if(student is null)
+                throw new NotFoundException("Student not found");   
 
-            post.AddStudent(student);
+
+            post.AddStudent(student);      
+            await _postRepository.UpdateAsync(post);
             
-            await _postRepository.UpdateAsync();
-            */
-
         }
     }
 }
