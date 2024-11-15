@@ -21,9 +21,9 @@ namespace Tutorly.Application.Handlers
         }
         public async Task Handle(LoginUser command)
         {
-            var userToLogIn = await _userRepository.GetBy(e => e.Email == command.Email);
+            var userToLogIn = await _userRepository.GetByAsync(e => e.Email == command.Email);
 
-            if (userToLogIn is null)
+            if (userToLogIn is null)    
                 throw new NotFoundException("Incorrect email or password");
 
             var hasher = new PasswordHasher();
