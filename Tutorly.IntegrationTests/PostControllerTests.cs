@@ -1,7 +1,10 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Tutorly.Application.Dtos;
+using Tutorly.Infrastructure;
 
 namespace Tutorly.IntegrationTests
 {
@@ -12,7 +15,22 @@ namespace Tutorly.IntegrationTests
 
         public PostControllerTests(WebApplicationFactory<Program> factory)
         {
-            _client = factory.CreateClient();
+            _client = factory.WithWebHostBuilder(host =>
+            {
+                host.ConfigureServices(services =>
+                {
+                    var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType ==
+                        typeof(DbContextOptions<TutorlyDbContext>));
+                    services.Remove(descriptor);
+
+                    services.AddDbContext<TutorlyDbContext>(options =>
+                    {
+                        options.UseInMemoryDatabase("InMemoryDB");
+                    });
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
         }
 
 
