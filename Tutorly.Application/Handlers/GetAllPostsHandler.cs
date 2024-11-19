@@ -12,11 +12,16 @@ namespace Tutorly.Application.Handlers
     public class GetAllPostsHandler : IQueryHandler<GetAllPosts, IEnumerable<Post>>
     {
         private readonly IRepository<Post> _postRepository;
+        private readonly IRepository<Tutor> _tutorRepository;
+        private readonly IRepository<Category> _categoryRepository;
 
-        public GetAllPostsHandler(IRepository<Post> postRepository) 
+        public GetAllPostsHandler(IRepository<Post> postRepository, IRepository<Tutor> tutorRepository, IRepository<Category> categoryRepository) 
         {
-            _postRepository = postRepository;       
+            _postRepository = postRepository;
+            _tutorRepository = tutorRepository;
+            _categoryRepository = categoryRepository;   
         }
+
         public async Task<IEnumerable<Post>> HandleAsync(GetAllPosts query)
         {
 
@@ -25,7 +30,32 @@ namespace Tutorly.Application.Handlers
                 await _postRepository.GetAllAsync() :           
                 await _postRepository.GetAllAsync(x => x.CategoryId == query.CategoryId);
 
-            return posts;
+            var tutors = await _tutorRepository.GetAllAsync();
+
+            var categories = await _categoryRepository.GetAllAsync();
+
+
+            var postsWithTutors = posts.Join(
+                tutors,                               
+                post => post.TutorId,               
+                tutor => tutor.Id,                   
+                (post, tutor) =>                     
+                {
+                    post.Tutor = tutor;
+                    return post;
+                });
+
+            var postsWithCategories = postsWithTutors.Join(
+                categories,                          
+                post => post.CategoryId,             
+                category => category.Id,             
+                (post, category) =>                  
+                {
+                    post.Category = category;
+                    return post;
+                });
+
+            return postsWithCategories;
 
         }
     }
