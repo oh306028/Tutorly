@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
 using Tutorly.Application.Dtos;
+using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Domain.Models;
 using Tutorly.Infrastructure;
 

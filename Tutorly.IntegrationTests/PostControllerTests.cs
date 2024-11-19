@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Net;
 using Tutorly.Application.Dtos;
+using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 using Tutorly.Infrastructure;
