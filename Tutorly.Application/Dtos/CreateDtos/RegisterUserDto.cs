@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Domain.Models;
 
-namespace Tutorly.Application.Dtos
+namespace Tutorly.Application.Dtos.CreateDtos
 {
     public class RegisterUserDto
     {
@@ -16,6 +16,6 @@ namespace Tutorly.Application.Dtos
         public string LastName { get; set; }
         public string Role { get; set; }
 
-        public string? Grade { get; set; } = null;
+        public string Grade { get; set; } = null;
     }
 }

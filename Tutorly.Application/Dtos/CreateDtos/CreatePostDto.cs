@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Domain.Models;
 
-namespace Tutorly.Application.Dtos
+namespace Tutorly.Application.Dtos.CreateDtos
 {
     public class CreatePostDto
     {
@@ -16,7 +16,7 @@ namespace Tutorly.Application.Dtos
         public TimeSpan HappensAt { get; }
         public bool IsRemotely { get; }
         public bool IsAtStudentPlace { get; }
-        public string? Description { get; }
+        public string Description { get; }
         public int? AddressId { get; }
         public Grade StudentsGrade { get; }
     }
