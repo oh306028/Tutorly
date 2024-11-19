@@ -1,10 +1,14 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Application.Commands;
 using Tutorly.Application.Dtos;
+using Tutorly.Application.Dtos.CreateDtos;
+using Tutorly.Application.Dtos.DisplayDtos;
+using Tutorly.Application.Dtos.Params;
 using Tutorly.Application.Handlers;
 using Tutorly.Application.Interfaces;
 using Tutorly.Application.Queries;
@@ -14,10 +18,10 @@ namespace Tutorly.Application.Services
 {
     public interface IPostService
     {
-        Task<IEnumerable<Post>> GetAll(QueryParams queryParams = null);
+        Task<IEnumerable<PostWithTutorDto>> GetAll(QueryParams queryParams = null);
         Task Create(CreatePostDto dto);
 
-        Task ApplyForPost(int postId);
+        Task ApplyForPost(int postId);  
     }
 
     public class PostService : IPostService
@@ -25,20 +29,25 @@ namespace Tutorly.Application.Services
         private readonly IHandler<CreatePost> _createPosthandler;
         private readonly IQueryHandler<GetAllPosts, IEnumerable<Post>> _queryHandler;
         private readonly IHandler<PostApply> _applyPostHandler;
+        private readonly IMapper _mapper;
 
-        public PostService(IHandler<CreatePost> createPosthandler, IQueryHandler<GetAllPosts, IEnumerable<Post>> queryHandler, IHandler<PostApply> applyPostHandler)
+        public PostService(IHandler<CreatePost> createPosthandler, IQueryHandler<GetAllPosts, IEnumerable<Post>> queryHandler, IHandler<PostApply> applyPostHandler
+            , IMapper mapper)
         {
             _createPosthandler = createPosthandler;
             _queryHandler = queryHandler;
-            _applyPostHandler = applyPostHandler;   
+            _applyPostHandler = applyPostHandler;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Post>> GetAll(QueryParams? queryParams = null)
+        public async Task<IEnumerable<PostWithTutorDto>> GetAll(QueryParams? queryParams = null)
         {
-            var query = new GetAllPosts(queryParams);
+            var query = new GetAllPosts(queryParams);   
             var posts = await _queryHandler.HandleAsync(query);
+
+            var mappedResults = _mapper.Map<List<PostWithTutorDto>>(posts);  
                 
-            return posts;   
+            return mappedResults;       
         }
 
 

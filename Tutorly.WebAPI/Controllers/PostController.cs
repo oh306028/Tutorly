@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tutorly.Application.Commands;
 using Tutorly.Application.Dtos;
+using Tutorly.Application.Dtos.CreateDtos;
+using Tutorly.Application.Dtos.DisplayDtos;
+using Tutorly.Application.Dtos.Params;
 using Tutorly.Application.Handlers;
 using Tutorly.Application.Interfaces;
 using Tutorly.Application.Queries;
@@ -24,7 +27,7 @@ namespace Tutorly.WebAPI.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAll([FromQuery] QueryParams? queryParams = null)  
+        public async Task<ActionResult<IEnumerable<PostWithTutorDto>>> GetAll([FromQuery] QueryParams? queryParams = null)  
         {
 
             var result = await _postService.GetAll(queryParams);    
