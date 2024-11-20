@@ -9,5 +9,7 @@ namespace Tutorly.Application.Dtos.Params
     public class QueryParams
     {
         public int? CategoryId { get; set; }
+
+        public bool? IncludePosts { get; set; } 
     }
 }
