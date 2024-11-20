@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Tutorly.Application.Commands;
-using Tutorly.Application.Dtos;
+using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Handlers;
 using Tutorly.Application.Interfaces;
 using Tutorly.Application.Queries;
@@ -46,13 +46,15 @@ builder.Services.AddScoped<IHandler<RegisterUser>, RegisterUserHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAllPosts, IEnumerable<Post>>, GetAllPostsHandler>();
 builder.Services.AddScoped<IHandler<DeleteUser>, DeleteUserHandler>();
 builder.Services.AddScoped<IHandler<LoginUser>, LoginUserHandler>();
-builder.Services.AddScoped<IQueryHandler<GetUserBy, User>, GetUserByHandler>(); 
+builder.Services.AddScoped<IQueryHandler<GetUserBy, User>, GetUserByHandler>();
+builder.Services.AddScoped<IQueryHandler<GetAllTutors, IEnumerable<Tutor>>, GetAllTutorsHandler>();      
 
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
+builder.Services.AddScoped<ITutorService, TutorService>();
 
 
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
@@ -85,8 +87,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddScoped<DataGenerator>();
 
 var app = builder.Build();
+
+/*
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dataGenerator = services.GetRequiredService<DataGenerator>();
+
+    dataGenerator.Seed();
+}
+*/
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
