@@ -24,39 +24,15 @@ namespace Tutorly.Application.Handlers
 
         public async Task<IEnumerable<Post>> HandleAsync(GetAllPosts query)
         {
-
-            var posts =
-                query.CategoryId is null ?      
-                await _postRepository.GetAllAsync() :           
-                await _postRepository.GetAllAsync(x => x.CategoryId == query.CategoryId);
-
-            var tutors = await _tutorRepository.GetAllAsync();
-
             var categories = await _categoryRepository.GetAllAsync();
+            var posts = await _postRepository.GetAllAsync();
+            var tutor = await _tutorRepository.GetAllAsync();
 
 
-            var postsWithTutors = posts.Join(
-                tutors,                               
-                post => post.TutorId,               
-                tutor => tutor.Id,                   
-                (post, tutor) =>                     
-                {
-                    post.Tutor = tutor;
-                    return post;
-                });
+            posts = query.CategoryId is null ?
+                          posts : posts.Where(c => c.CategoryId == query.CategoryId).ToList();
 
-            var postsWithCategories = postsWithTutors.Join(
-                categories,                          
-                post => post.CategoryId,             
-                category => category.Id,             
-                (post, category) =>                  
-                {
-                    post.Category = category;
-                    return post;
-                });
-
-            return postsWithCategories;
-
+            return posts;
         }
     }
 }
