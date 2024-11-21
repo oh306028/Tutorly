@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Application.Dtos;
+using Tutorly.Application.Dtos.Params;
 using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 
