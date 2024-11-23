@@ -26,6 +26,12 @@ namespace Tutorly.WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TutorWithPostsDto>> GetTutorById([FromRoute] int id)
+        {
+            var result = await _tutorService.GetTutorById(id);  
+            return Ok(result);
+        }
 
     }
 }
