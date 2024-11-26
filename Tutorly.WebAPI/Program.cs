@@ -49,9 +49,11 @@ builder.Services.AddScoped<IHandler<LoginUser>, LoginUserHandler>();
 builder.Services.AddScoped<IQueryHandler<GetUserBy, User>, GetUserByHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAllTutors, IEnumerable<Tutor>>, GetAllTutorsHandler>();
 builder.Services.AddScoped<IQueryHandler<GetTutorById, Tutor>, GetTutorByIdHandler>();
+builder.Services.AddScoped<IQueryHandler<GetAllCategories, IEnumerable<Category>>, GetAllCategoriesHandler>();
 
 
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
