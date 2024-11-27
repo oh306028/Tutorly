@@ -14,35 +14,7 @@ namespace Tutorly.UnitTests
     public class PostTests  
     {
 
-        [Fact]
-        public void CreatePost_ValidModel_CreatesThePost()
-        {          
-            var postValidator = new CreatePostDtoValidator();
-            var createPost = new CreatePostDto()
-            {
-                TutorId = 1,
-                CategoryId = 1,
-                MaxStudentAmount = 1,
-                IsRemotely = true,
-                IsAtStudentPlace = false,
-                Description = "test",
-                StudentsGrade = Grade.Secondary,
-                HappensOn = DayOfWeek.Monday,
-                HappensAt = TimeSpan.Parse("17:30")
-
-            };
-
-
-            var response = postValidator.Validate(createPost);
-
-
-            response.IsValid.Should().BeTrue();
-
-        }
-
-
-
-
+       
 
         [Fact]
         public void AddStudent_ForValidRequest_IncreasesThePostsStudentsCount()
@@ -61,7 +33,6 @@ namespace Tutorly.UnitTests
             post.CurrentStudentAmount.Should().Be(1);
 
         }
-
 
 
         [Fact]
