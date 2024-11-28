@@ -12,8 +12,13 @@ namespace Tutorly.Application.Validators
     {
         public LoginUserDtoValidator()
         {
-            RuleFor(e => e.Email).NotEmpty();
-            RuleFor(p => p.Password).NotEmpty();
+            RuleFor(e => e.Email)
+                .EmailAddress()
+                .NotEmpty();
+
+
+            RuleFor(p => p.Password)
+                .NotEmpty();
         }
     }
 }
