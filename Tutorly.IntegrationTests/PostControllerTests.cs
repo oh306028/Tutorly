@@ -107,7 +107,44 @@ namespace Tutorly.IntegrationTests
 
         }
 
- 
+
+        [Fact]
+        public async Task DeletePost_ValidRequest_RemovesPostFromList()
+        {
+        
+            var student = new Student();
+            var post = new Post() { Id = 1, MaxStudentAmount = 2 };
+            post.AddStudent(student);
+
+            var posts = new List<Post> { post };
+
+            var postRepoMock = new Mock<IRepository<Post>>();
+            postRepoMock
+                .Setup(repo => repo.GetByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => posts.FirstOrDefault(p => p.Id == id));
+
+            postRepoMock
+                .Setup(repo => repo.DeleteAsync(It.IsAny<Post>()))
+                .Callback<Post>(p => posts.Remove(p));
+
+            var client = _factory.WithWebHostBuilder(host =>
+            {
+                host.ConfigureServices(services =>
+                {
+                    services.AddSingleton(postRepoMock.Object);
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+           
+            var response = await client.DeleteAsync("api/posts/1");
+
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            posts.Should().BeEmpty(); 
+        }
+
+
 
     }
 }
