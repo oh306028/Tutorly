@@ -54,6 +54,14 @@ namespace Tutorly.WebAPI.Controllers
             return Ok();
 
         }
+
+        [HttpDelete("{postId}")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult> DeletePost([FromRoute] int postId)
+        {
+            await _postService.DeletePost(postId);
+            return Ok();
+        }
         
 
     }

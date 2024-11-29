@@ -21,7 +21,9 @@ namespace Tutorly.Application.Services
         Task<IEnumerable<PostWithTutorDto>> GetAll(QueryParams queryParams = null);
         Task Create(CreatePostDto dto);
 
-        Task ApplyForPost(int postId);  
+        Task ApplyForPost(int postId);
+
+        Task DeletePost(int postId);
     }
 
     public class PostService : IPostService
@@ -30,14 +32,16 @@ namespace Tutorly.Application.Services
         private readonly IQueryHandler<GetAllPosts, IEnumerable<Post>> _queryHandler;
         private readonly IHandler<PostApply> _applyPostHandler;
         private readonly IMapper _mapper;
+        private readonly IHandler<DeletePost> _deletePostHandler;
 
         public PostService(IHandler<CreatePost> createPosthandler, IQueryHandler<GetAllPosts, IEnumerable<Post>> queryHandler, IHandler<PostApply> applyPostHandler
-            , IMapper mapper)
+            , IMapper mapper, IHandler<DeletePost> deletePostHandler)
         {
             _createPosthandler = createPosthandler;
             _queryHandler = queryHandler;
             _applyPostHandler = applyPostHandler;
             _mapper = mapper;
+            _deletePostHandler = deletePostHandler;
         }
 
         public async Task<IEnumerable<PostWithTutorDto>> GetAll(QueryParams? queryParams = null)
@@ -74,6 +78,12 @@ namespace Tutorly.Application.Services
             var command = new PostApply(postId);
             await _applyPostHandler.Handle(command);
 
+        }
+
+        public async Task DeletePost(int postId)
+        {
+            var command = new DeletePost(postId);
+            await _deletePostHandler.Handle(command);
         }
 
 
