@@ -51,6 +51,7 @@ builder.Services.AddScoped<IQueryHandler<GetAllTutors, IEnumerable<Tutor>>, GetA
 builder.Services.AddScoped<IQueryHandler<GetTutorById, Tutor>, GetTutorByIdHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAllCategories, IEnumerable<Category>>, GetAllCategoriesHandler>();
 builder.Services.AddScoped<IHandler<DeletePost>, DeletePostHandler>();
+builder.Services.AddScoped<IQueryHandler<GetUserData, User>, GetUserDataHandler>();
 
 
 builder.Services.AddScoped<IPostService, PostService>();
