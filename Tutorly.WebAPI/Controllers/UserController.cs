@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Dtos.DisplayDtos;
@@ -50,6 +51,16 @@ namespace Tutorly.WebAPI.Controllers
             var result = await _userService.GetUserData(userId);
 
             return Ok(result);
+        }
+
+
+        [HttpPatch("{userId}")]
+        [Authorize(Roles = "Student, Tutor")]
+        public async Task<ActionResult> UpdateUser([FromRoute] int userId, [FromBody] UpdateUserDto dto)
+        {
+            await _userService.UpdateUser(dto, userId);
+            return Ok();
+
         }
 
 

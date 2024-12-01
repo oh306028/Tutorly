@@ -22,6 +22,7 @@ namespace Tutorly.WebAPI.Services
 
         Task<string> LoginUser(LoginUserDto dto);
         Task<UserDataDto> GetUserData(int userId);
+        Task UpdateUser(UpdateUserDto dto, int userId);
     }
 
     public class UserService : IUserService
@@ -34,10 +35,11 @@ namespace Tutorly.WebAPI.Services
         private readonly IHandler<LoginUser> _loginUserHandler;
         private readonly IQueryHandler<GetUserBy, User> _getUserByHandler;
         private readonly IQueryHandler<GetUserData, User> _getUserDataHandler;
+        private readonly IHandler<UpdateUserData> _updateUserHandler;
 
         public UserService(JwtOptions jwtOptions, IHandler<RegisterUser> registerUserHandler,
             IMapper mapper, IHandler<DeleteUser> deleteUserHandler, IHandler<LoginUser> loginUserHandler,
-            IQueryHandler<GetUserBy, User> getUserByHandler, IQueryHandler<GetUserData, User> getUserDataHandler)    
+            IQueryHandler<GetUserBy, User> getUserByHandler, IQueryHandler<GetUserData, User> getUserDataHandler, IHandler<UpdateUserData> updateUserHandler)    
         {
             _jwtOptions = jwtOptions;
             _registerUserHandler = registerUserHandler;
@@ -46,6 +48,15 @@ namespace Tutorly.WebAPI.Services
             _loginUserHandler = loginUserHandler;
             _getUserByHandler = getUserByHandler;
             _getUserDataHandler = getUserDataHandler;
+            _updateUserHandler = updateUserHandler;
+        }
+
+
+        public async Task UpdateUser(UpdateUserDto dto, int userId)
+        {
+            var command = new UpdateUserData(userId, dto.FirstName, dto.LastName, dto.Email, dto.Experience, dto.Grade, dto.Description);
+
+            await _updateUserHandler.Handle(command);
         }
 
 
