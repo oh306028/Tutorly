@@ -1,12 +1,15 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using System.Net;
 using System.Net.Http.Json;
 using Tutorly.Application.Dtos;
 using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Domain.Models;
 using Tutorly.Infrastructure;
+using Tutorly.Infrastructure.Repos;
 
 namespace Tutorly.IntegrationTests
 {
@@ -14,6 +17,7 @@ namespace Tutorly.IntegrationTests
     {
 
         private readonly HttpClient _client;
+        private readonly WebApplicationFactory<Program> _factory;
 
         public UserControllerTests(WebApplicationFactory<Program> factory)
         {
@@ -33,6 +37,7 @@ namespace Tutorly.IntegrationTests
                 });
             }).CreateClient();
 
+            _factory = factory;
         }   
 
         [Fact]
@@ -60,6 +65,40 @@ namespace Tutorly.IntegrationTests
 
 
         }
+
+        [Fact]
+        public async Task UpdateUser_ValidData_ReturnsOk()  
+        {
+            var student = new Student()
+            {
+                Id = 1,
+                FirstName = "Oskar"
+            };
+
+            var repositoryMock = new Mock<UserRepository>();
+            repositoryMock.Setup(c => c.GetByIdAsync(It.IsAny<int>())).Returns(Task.FromResult((User)student));
+
+            var client = _factory.WithWebHostBuilder(host =>
+            {
+                host.ConfigureServices(services =>
+                {
+                    services.AddSingleton(repositoryMock.Object);
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                });
+            }).CreateClient();
+
+
+
+
+
+
+
+
+
+
+        }
+
+
 
         [Theory]
         [InlineData("password", "password1")]
