@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 using Tutorly.Application.Dtos;
 using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Domain.Models;
@@ -17,6 +19,7 @@ namespace Tutorly.IntegrationTests
     {
 
         private readonly HttpClient _client;
+        private readonly TutorlyDbContext _context;
         private readonly WebApplicationFactory<Program> _factory;
 
         public UserControllerTests(WebApplicationFactory<Program> factory)
@@ -36,6 +39,9 @@ namespace Tutorly.IntegrationTests
                     });
                 });
             }).CreateClient();
+
+            var scope = factory.Services.CreateScope();
+            _context = scope.ServiceProvider.GetRequiredService<TutorlyDbContext>();
 
             _factory = factory;
         }   
@@ -69,30 +75,48 @@ namespace Tutorly.IntegrationTests
         [Fact]
         public async Task UpdateUser_ValidData_ReturnsOk()  
         {
-            var student = new Student()
-            {
-                Id = 1,
-                FirstName = "Oskar"
-            };
-
-            var repositoryMock = new Mock<UserRepository>();
-            repositoryMock.Setup(c => c.GetByIdAsync(It.IsAny<int>())).Returns(Task.FromResult((User)student));
-
             var client = _factory.WithWebHostBuilder(host =>
             {
                 host.ConfigureServices(services =>
                 {
-                    services.AddSingleton(repositoryMock.Object);
                     services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
                 });
             }).CreateClient();
 
 
+            var student = new Student()
+            {
+                Email = "hamerl@gma.com",
+                PasswordHash = "djsgojsagajpojaga16846afsafsf333",
+                FirstName = "Oskar",
+                LastName = "Hamer",
+                Role = Role.Student,
+                Grade = Grade.Secondary
+            };
+        
+
+            var request = new UpdateUserDto()
+            {
+                FirstName = "Tom",
+            };
+
+            _context.Users.Add(student);
+            _context.SaveChanges();
+
+            var user =  _context.Users.FirstOrDefault(n => n.FirstName == "Oskar");
+
+            var jsonContent = new StringContent(
+                JsonSerializer.Serialize(request),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await client.PatchAsync($"api/accounts/{user.Id}", jsonContent);
 
 
 
-
-
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var updatedStudent =  _context.Users.FirstOrDefault(n => n.LastName == "Hamer");
+            updatedStudent.FirstName.Should().Be("Tom");
 
 
 
