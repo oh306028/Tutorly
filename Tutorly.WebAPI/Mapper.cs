@@ -28,6 +28,11 @@ namespace Tutorly.WebAPI
             CreateMap<Post, PostDto>();
 
             CreateMap<Tutor, TutorWithPostsDto>();
+
+            CreateMap<User, UserDataDto>();
+
+            CreateMap<UpdateUserDto, UpdateUserData>();
+
         }
 
 
