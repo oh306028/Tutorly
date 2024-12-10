@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Dtos.DisplayDtos;
 using Tutorly.WebAPI.Services;
 
@@ -25,6 +26,13 @@ namespace Tutorly.WebAPI.Controllers
             return Ok(result);
         }
 
+
+        [HttpPost]
+        public async Task<ActionResult> CreateCategory(CreateCategoryDto dto)
+        {
+           await _categoryService.CreateCategory(dto);  
+            return Created("api/categories", null);
+        }
 
 
     }
