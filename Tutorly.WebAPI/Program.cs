@@ -21,6 +21,20 @@ using Tutorly.WebAPI.Authentication;
 using Tutorly.WebAPI.Middlewares;
 using Tutorly.WebAPI.Services;
 
+/*
+ 
+ @TO DO:
+- Category controller 
+ => getting (+) / testing / role based endpoint
+
+- Logging
+
+-Azure
+
+-Fix userData change -> Patch
+ 
+ */
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -52,6 +66,9 @@ builder.Services.AddScoped<IQueryHandler<GetTutorById, Tutor>, GetTutorByIdHandl
 builder.Services.AddScoped<IQueryHandler<GetAllCategories, IEnumerable<Category>>, GetAllCategoriesHandler>();
 builder.Services.AddScoped<IHandler<DeletePost>, DeletePostHandler>();
 builder.Services.AddScoped<IQueryHandler<GetUserData, User>, GetUserDataHandler>();
+builder.Services.AddScoped<IHandler<UpdateUserData>, UpdateUserDataHandler>();
+builder.Services.AddScoped<IHandler<CreateCategory>, CreateCategoryHandler>();
+
 
 
 builder.Services.AddScoped<IPostService, PostService>();
