@@ -62,11 +62,11 @@ namespace Tutorly.Infrastructure.Repos
             return result;
         }
 
-        public Task UpdateAsync(User user)  
+        public async Task UpdateAsync(User user)  
         {
             _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
 
-            return Task.CompletedTask;
         }
     }
 }
