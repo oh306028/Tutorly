@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using Tutorly.Application.Dtos;
 using Tutorly.Application.Dtos.CreateDtos;
+using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 using Tutorly.Infrastructure;
 using Tutorly.Infrastructure.Repos;
@@ -36,7 +37,10 @@ namespace Tutorly.IntegrationTests
                     services.AddDbContext<TutorlyDbContext>(options =>
                     {
                         options.UseInMemoryDatabase("InMemoryDB");
+                        
                     });
+
+
                 });
             }).CreateClient();
 
@@ -71,56 +75,51 @@ namespace Tutorly.IntegrationTests
 
 
         }
-
         [Fact]
-        public async Task UpdateUser_ValidData_ReturnsOk()  
+        public async Task UpdateUser_ValidData_ReturnsOk()
         {
             var client = _factory.WithWebHostBuilder(host =>
             {
                 host.ConfigureServices(services =>
                 {
                     services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+
+                    var descriptor = services.SingleOrDefault(
+                    d => d.ServiceType ==
+                        typeof(DbContextOptions<TutorlyDbContext>));
+                    services.Remove(descriptor);
+
+                    services.AddDbContext<TutorlyDbContext>(options =>
+                    {
+                        options.UseInMemoryDatabase("InMemoryDB");
+                    });
                 });
             }).CreateClient();
 
 
-            var student = new Student()
-            {
-                Email = "hamerl@gma.com",
-                PasswordHash = "djsgojsagajpojaga16846afsafsf333",
-                FirstName = "Oskar",
-                LastName = "Hamer",
-                Role = Role.Student,
-                Grade = Grade.Secondary
-            };
-        
+            var student = _context.Users.FirstOrDefault(n => n.FirstName == "Tom");
 
             var request = new UpdateUserDto()
             {
-                FirstName = "Tom",
+                FirstName = "Andrej",
             };
-
-            _context.Users.Add(student);
-            _context.SaveChanges();
-
-            var user =  _context.Users.FirstOrDefault(n => n.FirstName == "Oskar");
 
             var jsonContent = new StringContent(
                 JsonSerializer.Serialize(request),
                 Encoding.UTF8,
                 "application/json");
 
-            var response = await client.PatchAsync($"api/accounts/{user.Id}", jsonContent);
+            var response = await client.PatchAsync($"api/accounts/{student.Id}", jsonContent);
 
-
-
+       
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var updatedStudent =  _context.Users.FirstOrDefault(n => n.LastName == "Hamer");
-            updatedStudent.FirstName.Should().Be("Tom");
 
-
-
+          
+            var updatedStudent = _context.Users.FirstOrDefault(n => n.LastName == "Hamerla");
+            updatedStudent.FirstName.Should().Be("Andrej");
         }
+
+      
 
 
 
