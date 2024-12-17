@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Dtos.DisplayDtos;
@@ -26,7 +27,7 @@ namespace Tutorly.WebAPI.Controllers
             return Ok(result);
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateCategory(CreateCategoryDto dto)
         {
