@@ -25,8 +25,8 @@ namespace Tutorly.Domain.Models
             HappensOn = happensOn;
             HappensAt = happensAt;
             IsRemotely = isRemotely;
-            IsAtStudentPlace = isAtStudentPlace;    
-            AddressId = address;    
+            IsAtStudentPlace = isAtStudentPlace;
+            AddressId = address;
             Tutor = tutor;
         }
 
@@ -37,12 +37,24 @@ namespace Tutorly.Domain.Models
         public readonly List<PostsStudents> Students = new();   
         public string? Description { get; set; }
         public DayOfWeek HappensOn { get; set; }
-        public TimeSpan HappensAt { 
-            get { return HappensAt; } 
-            set { if (value >= TimeSpan.MinValue && value < TimeSpan.MaxValue) { HappensAt = value; }
-                else { throw new ArgumentException("Post cannot be done at that time"); } }
+        private TimeSpan _happensAt;
+
+        public TimeSpan HappensAt
+        {
+            get { return _happensAt; }
+            set
+            {
+                if (value >= TimeSpan.MinValue && value < TimeSpan.MaxValue)
+                {
+                    _happensAt = value; 
+                }
+                else
+                {
+                    throw new ArgumentException("Post cannot be done at that time");
+                }
+            }
         }
-            
+
         public bool IsRemotely { get; set; }
         public bool IsAtStudentPlace { get; }
         public bool IsHappeningAtStudentPlace { get; set; }
@@ -52,10 +64,10 @@ namespace Tutorly.Domain.Models
         public int? AddressId { get; set; }         
 
         public int TutorId { get; set; }
-        public Tutor Tutor { get; init; }
+        public Tutor Tutor { get; set; }
 
         public int CategoryId { get; set; }
-        public Category Category { get; init; }
+        public Category Category { get; set; }
 
         public void AddStudent(Student student)
         {
