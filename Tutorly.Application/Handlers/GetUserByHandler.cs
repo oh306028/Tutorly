@@ -20,9 +20,9 @@ namespace Tutorly.Application.Handlers
         }
         public async Task<User> HandleAsync(GetUserBy query)
         {
-            var user = await _userRepository.GetBy(query.Predicate);
+            var user = await _userRepository.GetByAsync(query.Predicate);
 
-            return user;
+            return user;    
 
         }
 
