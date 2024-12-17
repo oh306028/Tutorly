@@ -24,14 +24,13 @@ using Tutorly.WebAPI.Services;
 /*
  
  @TO DO:
-- Category controller 
- => getting (+) / testing / role based endpoint
 
 - Logging
 
 -Azure
 
--Fix userData change -> Patch
+
+
  
  */
 
@@ -81,6 +80,7 @@ builder.Services.AddScoped<ITutorService, TutorService>();
 
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateCategoryDto>, CreateCategoryDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -110,6 +110,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddScoped<DataGenerator>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontEndClient", builder =>
+            builder.AllowAnyHeader()
+            .AllowAnyMethod()
+             .AllowAnyHeader()
+            .WithExposedHeaders("Location")
+            .WithOrigins("http://localhost:5173")
+
+    );
+});
 
 var app = builder.Build();
 
