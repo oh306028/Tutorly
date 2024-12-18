@@ -24,6 +24,7 @@ namespace Tutorly.Application.Services
         Task ApplyForPost(int postId);
 
         Task DeletePost(int postId);
+        Task AcceptStudentAsync(int postId, AcceptStudentParams queryParams);
     }
 
     public class PostService : IPostService
@@ -33,15 +34,24 @@ namespace Tutorly.Application.Services
         private readonly IHandler<PostApply> _applyPostHandler;
         private readonly IMapper _mapper;
         private readonly IHandler<DeletePost> _deletePostHandler;
+        private readonly IHandler<AcceptStudent> _acceptStudentHandler;
 
         public PostService(IHandler<CreatePost> createPosthandler, IQueryHandler<GetAllPosts, IEnumerable<Post>> queryHandler, IHandler<PostApply> applyPostHandler
-            , IMapper mapper, IHandler<DeletePost> deletePostHandler)
+            , IMapper mapper, IHandler<DeletePost> deletePostHandler, IHandler<AcceptStudent> acceptStudentHandler)
         {
             _createPosthandler = createPosthandler;
             _queryHandler = queryHandler;
             _applyPostHandler = applyPostHandler;
             _mapper = mapper;
             _deletePostHandler = deletePostHandler;
+            _acceptStudentHandler = acceptStudentHandler;
+        }
+
+        public async Task AcceptStudentAsync(int postId, AcceptStudentParams queryParams)
+        {
+            var command = new AcceptStudent(postId, queryParams.StudentId, queryParams.isAccepted);
+
+            await _acceptStudentHandler.Handle(command);
         }
 
         public async Task<IEnumerable<PostWithTutorDto>> GetAll(QueryParams? queryParams = null)

@@ -62,7 +62,16 @@ namespace Tutorly.WebAPI.Controllers
             await _postService.DeletePost(postId);
             return Ok();
         }
-        
+
+        [HttpPost("accept/{postId}")]
+        [Authorize(Roles = "Tutor")]
+        public async Task<ActionResult> AcceptStudent([FromRoute] int postId, [FromBody] AcceptStudentParams queryParams)   
+        {
+            await _postService.AcceptStudentAsync(postId, queryParams); 
+
+            return Accepted();
+        }
+
 
     }
 }
