@@ -14,5 +14,7 @@ namespace Tutorly.Domain.Models
 
         public int StudentId { get; set; }
         public Student Student { get; set; }
+
+        public bool IsAccepted { get; set; } = false;
     }
 }
