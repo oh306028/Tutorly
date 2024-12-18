@@ -34,32 +34,32 @@ namespace Tutorly.Application.Interfaces
 
         public async Task<IEnumerable<Post>> GetAllAsync()
         {
-            return await _dbContext.Posts.ToListAsync();
+            return await _dbContext.Posts.Include(p => p.Students).Include(p => p.Students).ToListAsync();
         }
 
         public async Task<IEnumerable<Post>> GetAllAsync(Expression<Func<Post, bool>> predicate)
         {
-            var results = await _dbContext.Posts.Where(predicate).ToListAsync();
+            var results = await _dbContext.Posts.Include(p => p.Students).Where(predicate).ToListAsync();
             return results;
         }
 
         public async Task<Post> GetByAsync(Expression<Func<Post, bool>> predicate)  
         {
-            var result = await _dbContext.Posts.FirstOrDefaultAsync(predicate);
+            var result = await _dbContext.Posts.Include(p => p.Students).FirstOrDefaultAsync(predicate);
 
             return result;
         }
 
         public Post GetBy(Expression<Func<Post, bool>> predicate)
         {
-            var result =  _dbContext.Posts.FirstOrDefault(predicate);
+            var result =  _dbContext.Posts.Include(p => p.Students).FirstOrDefault(predicate);
 
             return result;
         }   
 
         public Task<Post> GetByIdAsync(int id)
         {
-            var result = _dbContext.Posts.FirstOrDefault(i => i.Id == id);
+            var result = _dbContext.Posts.Include(p => p.Students).FirstOrDefault(i => i.Id == id);
             return Task.FromResult(result);
         }
             
