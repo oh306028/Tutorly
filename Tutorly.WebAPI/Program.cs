@@ -29,7 +29,8 @@ using Tutorly.WebAPI.Services;
 
 -Azure
 
-
+- Deleting only should be processed when the deleting tutor its owner of the deleted post!
+- THE SAME with the accepting students to the post
 
  
  */
@@ -67,13 +68,14 @@ builder.Services.AddScoped<IHandler<DeletePost>, DeletePostHandler>();
 builder.Services.AddScoped<IQueryHandler<GetUserData, User>, GetUserDataHandler>();
 builder.Services.AddScoped<IHandler<UpdateUserData>, UpdateUserDataHandler>();
 builder.Services.AddScoped<IHandler<CreateCategory>, CreateCategoryHandler>();
+builder.Services.AddScoped<IHandler<AcceptStudent>, AcceptStudentHandler>();
 
 
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITutorService, TutorService>();
 
@@ -81,6 +83,8 @@ builder.Services.AddScoped<ITutorService, TutorService>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserDtoValidator>();
 builder.Services.AddScoped<IValidator<CreateCategoryDto>, CreateCategoryDtoValidator>();
+builder.Services.AddScoped<IValidator<CreatePostDto>, CreatePostDtoValidator>();
+builder.Services.AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -124,6 +128,9 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+
+app.UseCors("FrontEndClient");
 
 /*
 using (var scope = app.Services.CreateScope())
