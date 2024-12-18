@@ -104,6 +104,7 @@ namespace Tutorly.WebAPI.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.Role, Enum.GetName(typeof(Role), user.Role) ?? string.Empty)
                
