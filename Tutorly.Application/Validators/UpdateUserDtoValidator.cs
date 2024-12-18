@@ -14,17 +14,17 @@ namespace Tutorly.Application.Validators
         {
             RuleFor(n => n.FirstName)
                 .MaximumLength(15)
-                .NotEmpty();
+                .NotEqual("");
                 
 
             RuleFor(n => n.LastName)
                .MaximumLength(20)
-               .NotEmpty();
+               .NotEqual("");
 
             RuleFor(n => n.Email)
              .MaximumLength(30)
              .EmailAddress()
-             .NotEmpty();
+             .NotEqual("");
 
         }
     }
