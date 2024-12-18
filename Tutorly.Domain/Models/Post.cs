@@ -88,6 +88,17 @@ namespace Tutorly.Domain.Models
            
             Students.Remove(postStudent);
 
-        }   
+        } 
+        
+
+        public void AcceptStudent(Student student)
+        {
+            var postStudent = Students.FirstOrDefault(ps => ps.StudentId == student.Id);
+
+            if (postStudent == null)
+                throw new NotFoundException("Cannot accept student that does not belong to current post");
+
+            postStudent.IsAccepted = true;
+        }
     }
 }
