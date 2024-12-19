@@ -2,13 +2,16 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
+using Tutorly.Application.Authorization;
 using Tutorly.Application.Commands;
 using Tutorly.Application.Dtos.CreateDtos;
+using Tutorly.Application.Dtos.Params;
 using Tutorly.Application.Handlers;
 using Tutorly.Application.Interfaces;
 using Tutorly.Application.Queries;
@@ -29,9 +32,9 @@ using Tutorly.WebAPI.Services;
 
 -Azure
 
-- Deleting only should be processed when the deleting tutor its owner of the deleted post!
-- THE SAME with the accepting students to the post
 
+
+-Validator accepting student
  
  */
 
@@ -71,6 +74,7 @@ builder.Services.AddScoped<IHandler<CreateCategory>, CreateCategoryHandler>();
 builder.Services.AddScoped<IHandler<AcceptStudent>, AcceptStudentHandler>();
 
 
+builder.Services.AddScoped<IAuthorizationHandler, ResourceAvaibilityRequirementHandler>();
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -78,8 +82,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITutorService, TutorService>();
-
-
+    
+builder.Services.AddScoped<IValidator<AcceptStudentParams>, AcceptStudentValidator>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserDtoValidator>();
 builder.Services.AddScoped<IValidator<CreateCategoryDto>, CreateCategoryDtoValidator>();
