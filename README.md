@@ -50,10 +50,10 @@ The **Tutorly API** is a web application connecting students with tutors. The pl
 - **POST** `api/posts/{postId}`:  
   (Student-only) Applies for a tutoring post.
 
-  - **POST** `api/posts/{postId}/accept`:  
+- **POST** `api/post/saccept/{postId}`:  
   (Tutor-only) Accepts student for a post application.
 
-  - **POST** `api/posts/{postId}/decline`:  
+- **POST** `api/posts/decline/{postId}`:  
   (Tutor-only) Decline student from a post application.
 
 
