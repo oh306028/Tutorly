@@ -7,14 +7,15 @@ using Tutorly.Application.Interfaces;
 
 namespace Tutorly.Application.Commands
 {
-    public class AcceptStudent : ICommand
+    public class DecideStudentApplication : ICommand    
     {
         public Guid Id { get; }
         public int PostId { get; }
         public int StudentId { get; }
-        public bool IsAccepted { get; set; }     
+        public bool IsAccepted { get; set; }    
 
-        public AcceptStudent(int postId, int studentId,  bool isAccepted)
+            
+        public DecideStudentApplication(int postId, int studentId, bool isAccepted)
         {
             Id = Guid.NewGuid();
             PostId = postId;
