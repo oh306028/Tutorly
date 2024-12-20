@@ -49,7 +49,14 @@ The **Tutorly API** is a web application connecting students with tutors. The pl
   
 - **POST** `api/posts/{postId}`:  
   (Student-only) Applies for a tutoring post.
-  
+
+  - **POST** `api/posts/{postId}/accept`:  
+  (Tutor-only) Accepts student for a post application.
+
+  - **POST** `api/posts/{postId}/decline`:  
+  (Tutor-only) Decline student from a post application.
+
+
 - **DELETE** `api/posts/{postId}`:  
   Deletes a tutoring post.
 
@@ -71,6 +78,8 @@ The **Tutorly API** is a web application connecting students with tutors. The pl
 - **FluentValidation**: Used for request validation ensuring only valid data is processed.
 - **FluentAssertions**: Employed for validating the behavior and outputs in unit and integration tests.
 - **AutoMapper**: Assists in mapping between domain models and DTOs, ensuring efficient data transfer.
+- **EntityFramework**: ORM technology used to create a database context and configure entities during application runtime. (code first)
+- **MSSQL**: database server used to store users and posts, configured to work with EF. Tested locally -> in future should be displayed to the Azure SQL.
 
 ### Testing
-- The project includes comprehensive **unit tests** and **integration tests** using XUnit, covering various aspects such as validation, data transformation, and API responses.
+- The project includes comprehensive **unit tests** and **integration tests** using XUnit, covering various aspects such as validation, data transformation, and API responses. (used FluentAssertions)
