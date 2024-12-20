@@ -71,7 +71,8 @@ builder.Services.AddScoped<IHandler<DeletePost>, DeletePostHandler>();
 builder.Services.AddScoped<IQueryHandler<GetUserData, User>, GetUserDataHandler>();
 builder.Services.AddScoped<IHandler<UpdateUserData>, UpdateUserDataHandler>();
 builder.Services.AddScoped<IHandler<CreateCategory>, CreateCategoryHandler>();
-builder.Services.AddScoped<IHandler<AcceptStudent>, AcceptStudentHandler>();
+builder.Services.AddScoped<IHandler<DecideStudentApplication>, DecideStudentApplicationHandler>();  
+
 
 
 builder.Services.AddScoped<IAuthorizationHandler, ResourceAvaibilityRequirementHandler>();
@@ -83,7 +84,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITutorService, TutorService>();
     
-builder.Services.AddScoped<IValidator<AcceptStudentParams>, AcceptStudentValidator>();
+builder.Services.AddScoped<IValidator<DecideStudentApplicationDto>, DecideStudentApplicationValidator>();   
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserDtoValidator>();
 builder.Services.AddScoped<IValidator<CreateCategoryDto>, CreateCategoryDtoValidator>();
