@@ -13,14 +13,14 @@ using Tutorly.WebAPI.Services;
 
 namespace Tutorly.Application.Handlers
 {
-    public class AcceptStudentHandler : IHandler<AcceptStudent>
+    public class DecideStudentApplicationHandler : IHandler<DecideStudentApplication>   
     {
         private readonly IRepository<Post> _postRepository;
         private readonly IRepository<Student> _studentRepository;
         private readonly IAuthorizationService _authorizationService;
         private readonly IUserContextService _userContextService;
 
-        public AcceptStudentHandler(IRepository<Post> postRepository, IRepository<Student> studentRepository,
+        public DecideStudentApplicationHandler(IRepository<Post> postRepository, IRepository<Student> studentRepository,
             IAuthorizationService authorizationService, IUserContextService userContextService)
         {
             _postRepository = postRepository;
@@ -28,11 +28,9 @@ namespace Tutorly.Application.Handlers
             _authorizationService = authorizationService;
             _userContextService = userContextService;
         }
-        public async Task Handle(AcceptStudent command)
+        public async Task Handle(DecideStudentApplication command)
         {
-            if (!command.IsAccepted)           
-                return;
-            
+           
             var post = await _postRepository.GetByIdAsync(command.PostId);
 
             if (post is null)
@@ -52,12 +50,17 @@ namespace Tutorly.Application.Handlers
 
             if (student is null)
                 throw new NotFoundException("Student not found");
-    
-            post.AcceptStudent(student);
+
+
+            if (command.IsAccepted)
+                post.AcceptStudent(student);
+
+            post.DeleteStudent(student);
+
+
 
             await _postRepository.UpdateAsync(post);
             
-
         }
     }
 }
