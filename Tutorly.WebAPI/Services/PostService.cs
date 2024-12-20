@@ -24,7 +24,8 @@ namespace Tutorly.Application.Services
         Task ApplyForPost(int postId);
 
         Task DeletePost(int postId);
-        Task AcceptStudentAsync(int postId, AcceptStudentParams queryParams);
+        Task DecideStudentApplicationAsync(int postId, DecideStudentApplicationDto dto);
+
     }
 
     public class PostService : IPostService
@@ -34,25 +35,28 @@ namespace Tutorly.Application.Services
         private readonly IHandler<PostApply> _applyPostHandler;
         private readonly IMapper _mapper;
         private readonly IHandler<DeletePost> _deletePostHandler;
-        private readonly IHandler<AcceptStudent> _acceptStudentHandler;
+        private readonly IHandler<DecideStudentApplication> _decideStudentApplicationHandler;
+
 
         public PostService(IHandler<CreatePost> createPosthandler, IQueryHandler<GetAllPosts, IEnumerable<Post>> queryHandler, IHandler<PostApply> applyPostHandler
-            , IMapper mapper, IHandler<DeletePost> deletePostHandler, IHandler<AcceptStudent> acceptStudentHandler)
+            , IMapper mapper, IHandler<DeletePost> deletePostHandler, IHandler<DecideStudentApplication> decideStudentApplicationHandler)   
         {
             _createPosthandler = createPosthandler;
             _queryHandler = queryHandler;
             _applyPostHandler = applyPostHandler;
             _mapper = mapper;
             _deletePostHandler = deletePostHandler;
-            _acceptStudentHandler = acceptStudentHandler;
-        }
+            _decideStudentApplicationHandler = decideStudentApplicationHandler;
 
-        public async Task AcceptStudentAsync(int postId, AcceptStudentParams queryParams)
+        }   
+
+        public async Task DecideStudentApplicationAsync(int postId, DecideStudentApplicationDto dto)    
         {
-            var command = new AcceptStudent(postId, queryParams.StudentId, queryParams.isAccepted);
+            var command = new DecideStudentApplication(postId, dto.StudentId, dto.IsAccepted);  
 
-            await _acceptStudentHandler.Handle(command);
+            await _decideStudentApplicationHandler.Handle(command);
         }
+
 
         public async Task<IEnumerable<PostWithTutorDto>> GetAll(QueryParams? queryParams = null)
         {
@@ -95,6 +99,8 @@ namespace Tutorly.Application.Services
             var command = new DeletePost(postId);
             await _deletePostHandler.Handle(command);
         }
+
+
 
 
     }
