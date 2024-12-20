@@ -15,7 +15,8 @@ namespace Tutorly.Application.Validators
         {
             RuleFor(s => s.StudentId)
                 .NotEmpty();
-
+            RuleFor(i => i.IsAccepted)
+                .NotNull();
 
         }
     }
