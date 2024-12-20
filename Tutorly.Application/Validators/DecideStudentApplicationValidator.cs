@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Dtos.Params;
 
 namespace Tutorly.Application.Validators
 {
-    public class AcceptStudentValidator : AbstractValidator<AcceptStudentParams>
+    public class DecideStudentApplicationValidator : AbstractValidator<DecideStudentApplicationDto>     
     {
-        public AcceptStudentValidator()
+        public DecideStudentApplicationValidator()  
         {
             RuleFor(s => s.StudentId)
                 .NotEmpty();
 
-            RuleFor(a => a.isAccepted)
-                .NotEmpty();
+
         }
     }
 }
