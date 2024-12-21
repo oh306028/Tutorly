@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Net;
+using System.Security.Claims;
 using Tutorly.Application.Dtos;
 using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Interfaces;
@@ -31,19 +33,86 @@ namespace Tutorly.IntegrationTests
                 host.ConfigureServices(services =>
                 {
                     var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
-                        typeof(DbContextOptions<TutorlyDbContext>));
-                    services.Remove(descriptor);
+                        d => d.ServiceType == typeof(DbContextOptions<TutorlyDbContext>));
+                    if (descriptor != null) services.Remove(descriptor);
 
-                    services.AddDbContext<TutorlyDbContext>(options =>
-                    {
-                        options.UseInMemoryDatabase("InMemoryDB");
-                    });
-                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+                        services.AddDbContext<TutorlyDbContext>(options =>
+                        options.UseInMemoryDatabase("InMemoryDB")); 
+                        services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+
+                    
+
                 });
             }).CreateClient();
            
         }
+
+        private void SeedTestData(TutorlyDbContext context)
+        {
+            context.Users.Add(new Tutor { FirstName = "Tutor", LastName = "Test", Email = "test@gmail", PasswordHash = "sdgdsgo;pjdgagaaw", Role = Role.Tutor });
+            context.Categories.Add(new Category
+            {
+                Id = 1,
+                Name = "Test Category"
+            });
+
+            context.SaveChanges();
+        }
+
+
+        [Fact]
+        public async Task CreatePost_ReturnsCreated()   
+        {
+
+            int tutorId = 0;
+            var client = _factory.WithWebHostBuilder(host =>
+            {
+                host.ConfigureServices(services =>
+                {
+                    var descriptor = services.SingleOrDefault(
+                        d => d.ServiceType == typeof(DbContextOptions<TutorlyDbContext>));
+                    if (descriptor != null) services.Remove(descriptor);
+
+                    services.AddDbContext<TutorlyDbContext>(options =>
+                    options.UseInMemoryDatabase("InMemoryDB"));
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+
+
+                    using var serviceProvider = services.BuildServiceProvider();
+                    using var scope = serviceProvider.CreateScope();
+                    var context = scope.ServiceProvider.GetRequiredService<TutorlyDbContext>();
+                    SeedTestData(context);
+                    tutorId = context.Users.FirstOrDefault(t => t.LastName == "Test").Id;
+
+                });
+            }).CreateClient();
+
+
+            var createPostDto = new CreatePostDto()
+            {
+
+                TutorId = tutorId,
+                CategoryId = 1,
+                MaxStudentAmount = 3,
+                HappensOn = DayOfWeek.Monday,
+                HappensAt = TimeSpan.Parse("17:00:00"),
+                IsRemotely = false,
+                StudentsGrade = Grade.Secondary
+
+            };
+
+            
+
+            var response = await client 
+                        .PostAsJsonAsync("api/posts",createPostDto);
+
+
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        }
+
+
+
 
 
         [Fact]
@@ -108,40 +177,111 @@ namespace Tutorly.IntegrationTests
         }
 
 
-        [Fact]
-        public async Task DeletePost_ValidRequest_RemovesPostFromList()
+        //[Fact]
+        //Cannot test static method and mocking the AuthorizationService is not done yet
+        public async Task DeletePost_ValidRequest_RemovesPostFromDatabase()
         {
-        
-            var student = new Student();
-            var post = new Post() { Id = 1, MaxStudentAmount = 2 };
-            post.AddStudent(student);
+            // Arrange
 
-            var posts = new List<Post> { post };
 
-            var postRepoMock = new Mock<IRepository<Post>>();
-            postRepoMock
-                .Setup(repo => repo.GetByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => posts.FirstOrDefault(p => p.Id == id));
+            var category = new Category()
+            {
+                Name = "Maths"
+            };
 
-            postRepoMock
-                .Setup(repo => repo.DeleteAsync(It.IsAny<Post>()))
-                .Callback<Post>(p => posts.Remove(p));
+            var tutor = new Tutor()
+            {
+                Email = "test@mail",
+                FirstName = "Tom",
+                LastName = "Test",
+                PasswordHash = "dsnldgnjlagasg",
+                Role = Role.Tutor
+            };
+
+            Post currentPost;
+            int tutorId = 0;
+            int postId = 0;
+
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<TutorlyDbContext>();
+                dbContext.Categories.Add(category);
+                dbContext.Users.Add(tutor);
+                await dbContext.SaveChangesAsync();
+
+                tutorId = dbContext.Users.FirstOrDefault(n => n.Email == "test@mail").Id;
+
+                var post = new Post
+                {
+                    MaxStudentAmount = 2,
+                    TutorId = tutor.Id,
+                    CategoryId = category.Id,
+                    HappensAt = TimeSpan.Parse("17:00:00"),
+                    HappensOn = DayOfWeek.Monday
+                };
+
+                dbContext.Posts.Add(post);
+
+                await dbContext.SaveChangesAsync();
+
+                currentPost = dbContext.Posts.FirstOrDefault(p => p.TutorId == tutorId);
+                postId = currentPost.Id;
+            }
+
+            
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, tutorId.ToString())
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
+            var user = new ClaimsPrincipal(identity);
+
+            var userContextServiceMock = new Mock<IUserContextService>();
+            userContextServiceMock.Setup(c => c.User).Returns(user);
+
+
+            var authorizationMock = Mock.Of<IAuthorizationService>();
+
+           
+            Mock.Get(authorizationMock)
+                .Setup(service => service.AuthorizeAsync(
+                    It.IsAny<ClaimsPrincipal>(),
+                    It.IsAny<Post>(),
+                    It.IsAny<IAuthorizationRequirement>()
+                ))
+                .ReturnsAsync(AuthorizationResult.Success);
+
 
             var client = _factory.WithWebHostBuilder(host =>
             {
                 host.ConfigureServices(services =>
                 {
-                    services.AddSingleton(postRepoMock.Object);
+                    services.AddSingleton(userContextServiceMock.Object);
+              
+                    var descriptor = services.SingleOrDefault(
+                        d => d.ServiceType == typeof(DbContextOptions<TutorlyDbContext>));
+                    if (descriptor != null) services.Remove(descriptor);
+
+                    services.AddDbContext<TutorlyDbContext>(options =>
+                        options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+
                     services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
                 });
             }).CreateClient();
 
-           
-            var response = await client.DeleteAsync("api/posts/1");
+            // Act
+            var response = await client.DeleteAsync($"api/posts/{postId}");
 
-
+            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            posts.Should().BeEmpty(); 
+
+          
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<TutorlyDbContext>();
+                var deletedPost = await dbContext.Posts.FindAsync(postId);
+                deletedPost.Should().BeNull(); 
+            }
         }
 
 
