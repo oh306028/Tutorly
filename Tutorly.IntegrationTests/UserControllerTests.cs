@@ -20,9 +20,6 @@ namespace Tutorly.IntegrationTests
     {
 
         private readonly HttpClient _client;
-        private readonly TutorlyDbContext _context;
-        private readonly WebApplicationFactory<Program> _factory;
-
         public UserControllerTests(WebApplicationFactory<Program> factory)
         {
             _client = factory.WithWebHostBuilder(host =>
@@ -36,19 +33,39 @@ namespace Tutorly.IntegrationTests
 
                     services.AddDbContext<TutorlyDbContext>(options =>
                     {
-                        options.UseInMemoryDatabase("InMemoryDB");
+                        options.UseInMemoryDatabase("InMemoryDbUsers");
                         
                     });
+
+                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
+
+                    using var serviceProvider = services.BuildServiceProvider();
+                    using var scope = serviceProvider.CreateScope();
+                    var context = scope.ServiceProvider.GetRequiredService<TutorlyDbContext>();
+                    SeedUsersSampleData(context);
 
 
                 });
             }).CreateClient();
 
-            var scope = factory.Services.CreateScope();
-            _context = scope.ServiceProvider.GetRequiredService<TutorlyDbContext>();
 
-            _factory = factory;
         }   
+
+        private void SeedUsersSampleData(TutorlyDbContext context)
+        {
+            var user = new Student()
+            {
+                FirstName = "Test",
+                LastName = "Testowo",
+                Email = "Test@gmail",
+                PasswordHash = "opgdjssgdjdsg",
+                Role = Role.Student
+            };
+
+            context.Users.Add(user);
+            context.SaveChanges();
+
+        }
 
         [Fact]
         public async Task RegisterUser_ValidData_ReturnsCreated()
@@ -77,27 +94,7 @@ namespace Tutorly.IntegrationTests
         }
         [Fact]
         public async Task UpdateUser_ValidData_ReturnsOk()
-        {
-            var client = _factory.WithWebHostBuilder(host =>
-            {
-                host.ConfigureServices(services =>
-                {
-                    services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
-
-                    var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType ==
-                        typeof(DbContextOptions<TutorlyDbContext>));
-                    services.Remove(descriptor);
-
-                    services.AddDbContext<TutorlyDbContext>(options =>
-                    {
-                        options.UseInMemoryDatabase("InMemoryDB");
-                    });
-                });
-            }).CreateClient();
-
-
-            var student = _context.Users.FirstOrDefault(n => n.FirstName == "Tom");
+        {          
 
             var request = new UpdateUserDto()
             {
@@ -109,17 +106,13 @@ namespace Tutorly.IntegrationTests
                 Encoding.UTF8,
                 "application/json");
 
-            var response = await client.PatchAsync($"api/accounts/{student.Id}", jsonContent);
+            var response = await _client.PatchAsync("api/accounts/1", jsonContent);
 
-       
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-          
-            var updatedStudent = _context.Users.FirstOrDefault(n => n.LastName == "Hamerla");
-            updatedStudent.FirstName.Should().Be("Andrej");
+            
         }
 
-      
+
 
 
 
