@@ -25,13 +25,16 @@ namespace Tutorly.Application.Validators
 
             RuleFor(p => p.IsAtStudentPlace)
                 .NotNull();
-
             
             RuleFor(g => g.StudentsGrade)
                 .NotEmpty();
 
             RuleFor(t => t.HappensAt)
-                .NotEmpty();
+                .NotEmpty()
+                .NotNull();
+
+            RuleFor(t => t.HappensOn)
+              .NotNull();
 
         }
     }
