@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Tutorly.Application.Dtos;
 using Tutorly.Application.Dtos.CreateDtos;
 using Tutorly.Application.Interfaces;
@@ -92,6 +93,8 @@ namespace Tutorly.IntegrationTests
 
 
         }
+
+
         [Fact]
         public async Task UpdateUser_ValidData_ReturnsOk()
         {          
@@ -109,6 +112,21 @@ namespace Tutorly.IntegrationTests
             var response = await _client.PatchAsync("api/accounts/1", jsonContent);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                Converters = { new JsonStringEnumConverter() }
+            };
+
+            var user = await _client.GetAsync("api/accounts/1");
+            var stringResult = await user.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Student>(stringResult, options); 
+
+            result.FirstName.Should().Be("Andrej");
             
         }
 
