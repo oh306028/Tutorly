@@ -8,7 +8,11 @@ namespace Tutorly.Domain.Models
 {
     public class Student : User
     {
-        public Grade Grade { get; set; }
+        public Student()
+        {
+            
+        }
+        public Grade? Grade { get; set; }
 
         public List<PostsStudents> Posts { get; set; } = new(); 
     }
