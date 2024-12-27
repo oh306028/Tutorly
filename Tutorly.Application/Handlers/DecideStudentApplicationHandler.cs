@@ -37,7 +37,7 @@ namespace Tutorly.Application.Handlers
                 throw new NotFoundException("Post not found");
 
             if (post.Students == null || !post.Students.Any())
-                throw new InvalidOperationException("Post does not have any students.");
+                throw new NotFoundException("Post does not have any students.");
 
             var user = _userContextService.User;
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, post, new ResourceAvaibilityRequirement());
