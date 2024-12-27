@@ -63,7 +63,7 @@ namespace Tutorly.WebAPI.Controllers
             return Ok();
         }
 
-        [HttpPost("accept/{postId}")]
+        [HttpPost("decide/{postId}")]
         [Authorize(Roles = "Tutor")]
         public async Task<ActionResult> AcceptStudent([FromRoute] int postId, [FromBody] DecideStudentApplicationDto dto)      
         {
@@ -71,17 +71,6 @@ namespace Tutorly.WebAPI.Controllers
 
             return Accepted();
         }
-
-            
-        [HttpPost("decline/{postId}")]
-        [Authorize(Roles = "Tutor")]    
-        public async Task<ActionResult> DeclineStudent([FromRoute] int postId, [FromBody] DecideStudentApplicationDto dto)  
-        {
-            await _postService.DecideStudentApplicationAsync(postId, dto);    
-
-            return Accepted();
-        }
-
 
 
 
