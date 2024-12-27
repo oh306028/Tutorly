@@ -22,7 +22,6 @@ namespace Tutorly.IntegrationTests
     {
         private readonly HttpClient _client;
         private readonly WebApplicationFactory<Program> _factory;
-        private readonly Mock<IUserContextService> _mockUserContextService;
         private readonly Mock<IUserContextService> _userContextServiceMock;
         private readonly Mock<IRepository<Student>> _studentRepoMock;
 
@@ -30,7 +29,7 @@ namespace Tutorly.IntegrationTests
         {
             _factory = factory;
 
-            _mockUserContextService = new Mock<IUserContextService>();
+
 
 
             _userContextServiceMock = new Mock<IUserContextService>();
@@ -180,7 +179,7 @@ namespace Tutorly.IntegrationTests
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-      
+
         }
 
      
@@ -258,6 +257,44 @@ namespace Tutorly.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
         }
+
+
+        [Fact]
+        public async Task AcceptAppliedStudent_ValidReqest_ReturnsOk()
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, "1")
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
+            var user = new ClaimsPrincipal(identity);
+
+            _userContextServiceMock.Setup(c => c.User).Returns(user);
+
+            _userContextServiceMock
+                .Setup(c => c.GetUserId).Returns(1);
+
+            _studentRepoMock
+                .Setup(c => c.GetByIdAsync(It.IsAny<int>())).Returns(Task.FromResult(new Student() { Id = 1 }));
+
+            await _client.PostAsync($"api/posts/1", null);
+
+            var acceptDto = new DecideStudentApplicationDto(1, true);
+
+
+
+
+       
+            var response = await _client.PostAsJsonAsync("api/posts/decide/1", acceptDto);
+
+            var result = await _client.GetAsync("api/posts");
+
+
+            response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+
+        }   
+
+
 
 
     }
