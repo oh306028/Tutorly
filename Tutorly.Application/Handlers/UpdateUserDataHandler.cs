@@ -7,22 +7,25 @@ using Tutorly.Application.Commands;
 using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 using Tutorly.Domain.ModelsExceptions;
+using Tutorly.WebAPI.Services;
 
 namespace Tutorly.Application.Handlers
 {
     public class UpdateUserDataHandler : IHandler<UpdateUserData>
     {
         private readonly IRepository<User> _userRepository;
+        private readonly IUserContextService _contextService;
 
-        public UpdateUserDataHandler(IRepository<User> userRepository)
+        public UpdateUserDataHandler(IRepository<User> userRepository, IUserContextService contextService)
         {
             _userRepository = userRepository;
+            _contextService = contextService;
         }
 
 
         public async Task Handle(UpdateUserData command)
         {
-            var userToUpdate = await _userRepository.GetByIdAsync(command.UserId);
+            var userToUpdate = await _userRepository.GetByIdAsync((int)_contextService.GetUserId);  
 
             if (userToUpdate is null)
                 throw new NotFoundException("User not found");
