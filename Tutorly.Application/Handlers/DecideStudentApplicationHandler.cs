@@ -43,7 +43,7 @@ namespace Tutorly.Application.Handlers
             var authorizationResult = await _authorizationService.AuthorizeAsync(user, post, new ResourceAvaibilityRequirement());
 
             if (!authorizationResult.Succeeded)
-                throw new ForbidException("Cannot accept student that does not apply for that post");
+                throw new ForbidException("Cannot handle post that the tutor is not owner of");
 
 
             var student = await _studentRepository.GetByIdAsync(command.StudentId);
