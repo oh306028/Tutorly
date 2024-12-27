@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,6 +15,7 @@ using Tutorly.Application.Interfaces;
 using Tutorly.Domain.Models;
 using Tutorly.Infrastructure;
 using Tutorly.Infrastructure.Repos;
+using Tutorly.WebAPI.Services;
 
 namespace Tutorly.IntegrationTests
 {
@@ -21,12 +23,16 @@ namespace Tutorly.IntegrationTests
     {
 
         private readonly HttpClient _client;
+        private Mock<IUserContextService> _userContextMock;
+
         public UserControllerTests(WebApplicationFactory<Program> factory)
         {
             _client = factory.WithWebHostBuilder(host =>
             {
                 host.ConfigureServices(services =>
                 {
+                     _userContextMock = new Mock<IUserContextService>();
+
                     var descriptor = services.SingleOrDefault(
                     d => d.ServiceType ==
                         typeof(DbContextOptions<TutorlyDbContext>));
@@ -39,7 +45,7 @@ namespace Tutorly.IntegrationTests
                     });
 
                     services.AddSingleton<IPolicyEvaluator, FakePolicyEvaluator>();
-
+                    services.AddSingleton(_userContextMock.Object);
                     using var serviceProvider = services.BuildServiceProvider();
                     using var scope = serviceProvider.CreateScope();
                     var context = scope.ServiceProvider.GetRequiredService<TutorlyDbContext>();
@@ -97,7 +103,19 @@ namespace Tutorly.IntegrationTests
 
         [Fact]
         public async Task UpdateUser_ValidData_ReturnsOk()
-        {          
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, "1")
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuth");
+            var user = new ClaimsPrincipal(identity);
+
+
+            _userContextMock.Setup(c => c.User).Returns(user);
+
+            _userContextMock
+                .Setup(c => c.GetUserId).Returns(1);
 
             var request = new UpdateUserDto()
             {
@@ -122,8 +140,8 @@ namespace Tutorly.IntegrationTests
                 Converters = { new JsonStringEnumConverter() }
             };
 
-            var user = await _client.GetAsync("api/accounts/1");
-            var stringResult = await user.Content.ReadAsStringAsync();
+            var userResult = await _client.GetAsync("api/accounts/1");  
+            var stringResult = await userResult.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<Student>(stringResult, options); 
 
             result.FirstName.Should().Be("Andrej");
