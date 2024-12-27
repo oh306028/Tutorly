@@ -13,6 +13,7 @@ namespace Tutorly.Application.Commands
         public PostApply(int postId)
         {
             PostId = postId;
+            Id = Guid.NewGuid();
         }
         public Guid Id { get; set; }    
         public int PostId { get; init; }
