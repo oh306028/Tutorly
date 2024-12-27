@@ -188,7 +188,25 @@ namespace Tutorly.IntegrationTests
         [Fact]
         public async Task DeletePost_ValidRequest_RemovesPostFromDatabase()
         {
-            
+            var createPostDto = new CreatePostDto()
+            {
+
+                TutorId = 1,
+                CategoryId = 1,
+                MaxStudentAmount = 3,
+                HappensOn = DayOfWeek.Monday,
+                HappensAt = TimeSpan.Parse("22:00:00"),
+                IsRemotely = false,
+                StudentsGrade = Grade.Secondary
+
+            };
+
+            await _client
+                  .PostAsJsonAsync("api/posts", createPostDto);
+
+
+
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, "1")
@@ -202,7 +220,7 @@ namespace Tutorly.IntegrationTests
             _userContextServiceMock
                 .Setup(c => c.GetUserId).Returns(1);
 
-            int postIdToDelete = 1;
+            int postIdToDelete = 2;
 
 
 
