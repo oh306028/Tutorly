@@ -35,6 +35,14 @@ namespace Tutorly.WebAPI.Controllers
                 
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PostWithTutorDto>> GetPostById([FromRoute] int id)
+        {
+            var result = await _postService.GetByIdAsync(id);
+            return Ok(result);
+        }
+
+
         [Authorize(Roles = "Tutor")]
         [HttpPost]  
         public async Task<ActionResult> Create(CreatePostDto dto)

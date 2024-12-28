@@ -32,10 +32,11 @@ using Tutorly.WebAPI.Services;
 
 -Azure
 
-
-
--Validator accepting student
+-Address repository
+ => adding address to post
  
+-getting posts by the location or by remote access
+
  */
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,6 +67,7 @@ builder.Services.AddScoped<IHandler<LoginUser>, LoginUserHandler>();
 builder.Services.AddScoped<IQueryHandler<GetUserBy, User>, GetUserByHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAllTutors, IEnumerable<Tutor>>, GetAllTutorsHandler>();
 builder.Services.AddScoped<IQueryHandler<GetTutorById, Tutor>, GetTutorByIdHandler>();
+builder.Services.AddScoped<IQueryHandler<GetPostById, Post>, GetPostByIdHandler>();
 builder.Services.AddScoped<IQueryHandler<GetAllCategories, IEnumerable<Category>>, GetAllCategoriesHandler>();
 builder.Services.AddScoped<IHandler<DeletePost>, DeletePostHandler>();
 builder.Services.AddScoped<IQueryHandler<GetUserData, User>, GetUserDataHandler>();

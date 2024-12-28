@@ -26,6 +26,8 @@ namespace Tutorly.Application.Services
         Task DeletePost(int postId);
         Task DecideStudentApplicationAsync(int postId, DecideStudentApplicationDto dto);
 
+        Task<PostWithTutorDto> GetByIdAsync(int id);
+
     }
 
     public class PostService : IPostService
@@ -36,10 +38,10 @@ namespace Tutorly.Application.Services
         private readonly IMapper _mapper;
         private readonly IHandler<DeletePost> _deletePostHandler;
         private readonly IHandler<DecideStudentApplication> _decideStudentApplicationHandler;
-
+        private readonly IQueryHandler<GetPostById, Post> _getPostbyIdHandler;
 
         public PostService(IHandler<CreatePost> createPosthandler, IQueryHandler<GetAllPosts, IEnumerable<Post>> queryHandler, IHandler<PostApply> applyPostHandler
-            , IMapper mapper, IHandler<DeletePost> deletePostHandler, IHandler<DecideStudentApplication> decideStudentApplicationHandler)   
+            , IMapper mapper, IHandler<DeletePost> deletePostHandler, IHandler<DecideStudentApplication> decideStudentApplicationHandler, IQueryHandler<GetPostById,Post> getPostbyIdHandler)   
         {
             _createPosthandler = createPosthandler;
             _queryHandler = queryHandler;
@@ -47,8 +49,17 @@ namespace Tutorly.Application.Services
             _mapper = mapper;
             _deletePostHandler = deletePostHandler;
             _decideStudentApplicationHandler = decideStudentApplicationHandler;
-
+            _getPostbyIdHandler = getPostbyIdHandler;
         }   
+
+        public async Task<PostWithTutorDto> GetByIdAsync(int id)
+        {
+            var query = new GetPostById(id);
+            var post = await _getPostbyIdHandler.HandleAsync(query);
+            var result = _mapper.Map<PostWithTutorDto>(post);
+
+            return result;
+        }
 
         public async Task DecideStudentApplicationAsync(int postId, DecideStudentApplicationDto dto)    
         {
