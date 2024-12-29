@@ -10,6 +10,11 @@ namespace Tutorly.Application.Dtos.Params
     {
         public int? CategoryId { get; set; }
 
-        public bool? IncludePosts { get; set; } 
+        public bool? IncludePosts { get; set; }
+
+
+        public string? City { get; set; }
+        public string? Street { get; set; }
+        public string? Number { get; set; }
     }
 }
