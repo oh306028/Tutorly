@@ -43,6 +43,13 @@ The **Tutorly API** is a web application connecting students with tutors. The pl
 #### **Post Endpoints**
 - **GET** `api/posts`:  
   Retrieves all available tutoring posts.
+  Filtering the results by QueryParams:
+  **CategoryId**
+  **Address**
+    -City / Street / Number
+
+- **GET** `api/posts/id`:
+  Retrieves post searched by its id
   
 - **POST** `api/posts`:  
   (Tutor-only) Creates a new tutoring post.
@@ -50,12 +57,8 @@ The **Tutorly API** is a web application connecting students with tutors. The pl
 - **POST** `api/posts/{postId}`:  
   (Student-only) Applies for a tutoring post.
 
-- **POST** `api/post/saccept/{postId}`:  
-  (Tutor-only) Accepts student for a post application.
-
-- **POST** `api/posts/decline/{postId}`:  
-  (Tutor-only) Decline student from a post application.
-
+- **POST** `api/post/decide/{postId}`:  
+  (Tutor-only) Decide about students applications, in the body send the boolean (true - accept / false - decline)
 
 - **DELETE** `api/posts/{postId}`:  
   Deletes a tutoring post.
