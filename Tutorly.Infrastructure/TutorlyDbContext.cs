@@ -13,6 +13,7 @@ namespace Tutorly.Infrastructure
         public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Address> Address { get; set; }        
 
         public TutorlyDbContext(DbContextOptions options) : base(options)
         {
