@@ -14,12 +14,14 @@ namespace Tutorly.Application.Handlers
         private readonly IRepository<Post> _postRepository;
         private readonly IRepository<Tutor> _tutorRepository;
         private readonly IRepository<Category> _categoryRepository;
+        private readonly IRepository<Address> _addressRepository;
 
-        public GetAllPostsHandler(IRepository<Post> postRepository, IRepository<Tutor> tutorRepository, IRepository<Category> categoryRepository) 
+        public GetAllPostsHandler(IRepository<Post> postRepository, IRepository<Tutor> tutorRepository, IRepository<Category> categoryRepository, IRepository<Address> addressRepository) 
         {
             _postRepository = postRepository;
             _tutorRepository = tutorRepository;
-            _categoryRepository = categoryRepository;   
+            _categoryRepository = categoryRepository;
+            _addressRepository = addressRepository;
         }
 
         public async Task<IEnumerable<Post>> HandleAsync(GetAllPosts query)
@@ -27,10 +29,28 @@ namespace Tutorly.Application.Handlers
             var categories = await _categoryRepository.GetAllAsync();
             var posts = await _postRepository.GetAllAsync();
             var tutor = await _tutorRepository.GetAllAsync();
-
+            var address = await _addressRepository.GetAllAsync();
 
             posts = query.CategoryId is null ?
-                          posts : posts.Where(c => c.CategoryId == query.CategoryId).ToList();
+                          posts : posts
+                          .Where(c => c.CategoryId == query.CategoryId);
+
+
+            posts = query.City is null 
+                            ? posts : posts
+                                    .Where(a => a.Address.City.ToLower().Contains(query.City.ToLower()));
+
+
+            posts = query.Street is null
+                          ? posts : posts
+                                  .Where(a => a.Address.Street.ToLower().Contains(query.Street.ToLower()));
+
+
+            posts = query.Number is null    
+                          ? posts : posts
+                                  .Where(a => a.Address.Number.ToLower().Contains(query.Number.ToLower()));
+
+
 
             return posts;
         }
