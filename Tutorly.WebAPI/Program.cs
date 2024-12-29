@@ -56,6 +56,7 @@ builder.Services.AddScoped<IRepository<Tutor>, TutorRepository>();
 builder.Services.AddScoped<IRepository<Category>, CategoryRepository>();
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
 builder.Services.AddScoped<IRepository<Student>, StudentRepository>();
+builder.Services.AddScoped<IRepository<Address>, AddressRepository>();
 
 
 builder.Services.AddScoped<IHandler<PostApply>, PostApplyHandler>();
