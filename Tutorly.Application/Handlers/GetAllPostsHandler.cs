@@ -31,7 +31,7 @@ namespace Tutorly.Application.Handlers
             var tutor = await _tutorRepository.GetAllAsync();
             var address = await _addressRepository.GetAllAsync();
 
-            posts = query.CategoryId is null ?
+            posts = query.CategoryId is null ?  
                           posts : posts
                           .Where(c => c.CategoryId == query.CategoryId);
 
@@ -50,7 +50,8 @@ namespace Tutorly.Application.Handlers
                           ? posts : posts
                                   .Where(a => a.Address.Number.ToLower().Contains(query.Number.ToLower()));
 
-
+            posts = query.IsRemotely is null
+                    ? posts : posts.Where(r => r.IsRemotely == true).ToList();
 
             return posts;
         }
