@@ -32,10 +32,11 @@ using Tutorly.WebAPI.Services;
 
 -Azure
 
--Address repository
- => adding address to post
+-address controller
+=> adding address to post
  
--getting posts by the location or by remote access
+-tests for getting posts by remote or address *
+-tests for address controller
 
  */
 
@@ -74,8 +75,9 @@ builder.Services.AddScoped<IHandler<DeletePost>, DeletePostHandler>();
 builder.Services.AddScoped<IQueryHandler<GetUserData, User>, GetUserDataHandler>();
 builder.Services.AddScoped<IHandler<UpdateUserData>, UpdateUserDataHandler>();
 builder.Services.AddScoped<IHandler<CreateCategory>, CreateCategoryHandler>();
-builder.Services.AddScoped<IHandler<DecideStudentApplication>, DecideStudentApplicationHandler>();  
-
+builder.Services.AddScoped<IHandler<DecideStudentApplication>, DecideStudentApplicationHandler>();
+builder.Services.AddScoped<IQueryHandler<GetAddress, Address>, GetAddressHandler>();
+builder.Services.AddScoped<IHandler<CreateAddress>, CreateAddressHandler>();
 
 
 builder.Services.AddScoped<IAuthorizationHandler, ResourceAvaibilityRequirementHandler>();
@@ -86,6 +88,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITutorService, TutorService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
     
 builder.Services.AddScoped<IValidator<DecideStudentApplicationDto>, DecideStudentApplicationValidator>();   
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
