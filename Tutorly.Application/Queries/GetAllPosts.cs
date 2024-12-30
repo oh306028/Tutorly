@@ -18,10 +18,12 @@ namespace Tutorly.Application.Queries
             City = queryParams.City;
             Street = queryParams.Street;
             Number = queryParams.Number;
+            IsRemotely = queryParams.IsRemotely;
         }
         public int? CategoryId { get; init; }
         public string? City { get; set; }
         public string? Street { get; set; }
         public string? Number { get; set; }
+        public bool? IsRemotely { get; set; }   
     }
 }
