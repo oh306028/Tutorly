@@ -19,7 +19,7 @@ namespace Tutorly.Application.Services
     public interface IPostService
     {
         Task<IEnumerable<PostWithTutorDto>> GetAll(QueryParams queryParams = null);
-        Task Create(CreatePostDto dto);
+        Task<int> Create(CreatePostDto dto);
 
         Task ApplyForPost(int postId);
 
@@ -39,9 +39,11 @@ namespace Tutorly.Application.Services
         private readonly IHandler<DeletePost> _deletePostHandler;
         private readonly IHandler<DecideStudentApplication> _decideStudentApplicationHandler;
         private readonly IQueryHandler<GetPostById, Post> _getPostbyIdHandler;
+        private readonly PostCreatedService _postCreatedService;
 
         public PostService(IHandler<CreatePost> createPosthandler, IQueryHandler<GetAllPosts, IEnumerable<Post>> queryHandler, IHandler<PostApply> applyPostHandler
-            , IMapper mapper, IHandler<DeletePost> deletePostHandler, IHandler<DecideStudentApplication> decideStudentApplicationHandler, IQueryHandler<GetPostById,Post> getPostbyIdHandler)   
+            , IMapper mapper, IHandler<DeletePost> deletePostHandler, IHandler<DecideStudentApplication> decideStudentApplicationHandler, IQueryHandler<GetPostById,Post> getPostbyIdHandler,
+            , PostCreatedService postCreatedService)   
         {
             _createPosthandler = createPosthandler;
             _queryHandler = queryHandler;
@@ -50,6 +52,7 @@ namespace Tutorly.Application.Services
             _deletePostHandler = deletePostHandler;
             _decideStudentApplicationHandler = decideStudentApplicationHandler;
             _getPostbyIdHandler = getPostbyIdHandler;
+            _postCreatedService = postCreatedService;
         }   
 
         public async Task<PostWithTutorDto> GetByIdAsync(int id)
@@ -80,7 +83,7 @@ namespace Tutorly.Application.Services
         }
 
 
-        public async Task Create(CreatePostDto dto)
+        public async Task<int> Create(CreatePostDto dto)
         {
             var command = new CreatePost(
                 dto.CategoryId,
@@ -96,6 +99,8 @@ namespace Tutorly.Application.Services
 
             await _createPosthandler.Handle(command);
 
+            return _postCreatedService.CreatedPostId;
+
         }
 
         public async Task ApplyForPost(int postId)
@@ -110,8 +115,6 @@ namespace Tutorly.Application.Services
             var command = new DeletePost(postId);
             await _deletePostHandler.Handle(command);
         }
-
-
 
 
     }
