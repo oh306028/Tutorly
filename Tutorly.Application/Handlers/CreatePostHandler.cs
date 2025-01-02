@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tutorly.Application.Commands;
 using Tutorly.Application.Interfaces;
+using Tutorly.Application.Services;
 using Tutorly.Domain.Models;
 using Tutorly.Domain.ModelsExceptions;
 
@@ -15,12 +16,14 @@ namespace Tutorly.Application.Handlers
         private readonly IRepository<Post> _postRepository;
         private readonly IRepository<Tutor> _tutorRepository;
         private readonly IRepository<Category> _categoryRepository;
+        private readonly PostCreatedService _postCreatedService;
 
-        public CreatePostHandler(IRepository<Post> postRepository, IRepository<Tutor> tutorRepository, IRepository<Category> categoryRepository)
+        public CreatePostHandler(IRepository<Post> postRepository, IRepository<Tutor> tutorRepository, IRepository<Category> categoryRepository, PostCreatedService postCreatedService)
         {
             _postRepository = postRepository;
             _tutorRepository = tutorRepository;
             _categoryRepository = categoryRepository;
+            _postCreatedService = postCreatedService;
         }
 
         //TO DO:
@@ -53,7 +56,10 @@ namespace Tutorly.Application.Handlers
 
 
             await _postRepository.AddAsync(newPost);
-           
+
+            _postCreatedService.CreatedPostId = newPost.Id;
+
+
         }
     }
 }
